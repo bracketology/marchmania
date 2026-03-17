@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Donny #1",
+    "picks": {
+      "g1": "Florida",
+      "g2": "Duke",
+      "g3": "Houston"
+    }
+  },
+  {
+    "name": "Mike #1",
+    "picks": {
+      "g1": "Florida",
+      "g2": "Kentucky",
+      "g3": "Houston"
+    }
+  },
+  {
+    "name": "Sarah #1",
+    "picks": {
+      "g1": "Auburn",
+      "g2": "Duke",
+      "g3": "Marquette"
+    }
+  }
+]
