@@ -137,7 +137,95 @@ width:220px;
 
 </style>
 </head>
+<script>
 
+function submitBracket(){
+
+let name = document.getElementById("name").value;
+let tiebreaker = document.getElementById("tiebreaker").value;
+
+if(!name){
+alert("Enter your name!");
+return;
+}
+
+// GET ALL PICKS
+let picks = {};
+let gameCounter = 1;
+
+// ROUND OF 64
+document.querySelectorAll(".region .r64 .game").forEach(game=>{
+let selected = game.querySelector(".selected");
+if(selected){
+picks["g" + gameCounter] = selected.innerText.replace(/^\d+\s/, "");
+}
+gameCounter++;
+});
+
+// ROUND OF 32
+document.querySelectorAll(".region .r32 .slot").forEach(slot=>{
+if(slot.innerText){
+picks["g" + gameCounter] = slot.innerText.replace(/^\d+\s/, "");
+}
+gameCounter++;
+});
+
+// SWEET 16
+document.querySelectorAll(".region .r16 .slot").forEach(slot=>{
+if(slot.innerText){
+picks["g" + gameCounter] = slot.innerText.replace(/^\d+\s/, "");
+}
+gameCounter++;
+});
+
+// ELITE 8
+document.querySelectorAll(".region .r8 .slot").forEach(slot=>{
+if(slot.innerText){
+picks["g" + gameCounter] = slot.innerText.replace(/^\d+\s/, "");
+}
+gameCounter++;
+});
+
+// FINAL FOUR + CHAMPIONSHIP
+document.querySelectorAll(".center .slot").forEach(slot=>{
+if(slot.innerText){
+picks["g" + gameCounter] = slot.innerText.replace(/^\d+\s/, "");
+}
+gameCounter++;
+});
+
+// CREATE ENTRY OBJECT
+let entry = {
+name: name,
+tiebreaker: tiebreaker,
+picks: picks
+};
+
+// FORMAT JSON
+let jsonOutput = JSON.stringify(entry, null, 2);
+
+// SHOW + COPY
+let existingBox = document.getElementById("jsonOutput");
+
+if(!existingBox){
+let textarea = document.createElement("textarea");
+textarea.id = "jsonOutput";
+textarea.style.width = "90%";
+textarea.style.height = "200px";
+textarea.style.marginTop = "20px";
+document.querySelector(".entry-form").appendChild(textarea);
+existingBox = textarea;
+}
+
+existingBox.value = jsonOutput;
+
+// AUTO COPY
+navigator.clipboard.writeText(jsonOutput);
+
+alert("Entry generated and copied! Send it to Donny or paste into entries.json");
+
+}
+</script>
 <body>
 
 <h1>March Madness Pool</h1>
