@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Leaderboard</title>
+
+<style>
+.winner{
+background:#c8f7c5;
+font-weight:bold;
+}
+
+.loser{
+background:#ffd6d6;
+}
+
+.busted::after{
+content:" ❌";
+color:red;
+font-weight:bold;
+}
+
+body{
+font-family:Arial;
+background:#f5f5f5;
+margin:0;
+text-align:center;
+}
+
+.navbar{
+background:#222;
+padding:12px;
+display:flex;
+justify-content:center;
+gap:25px;
+}
+
+.navbar a{
+color:white;
+text-decoration:none;
+font-weight:bold;
+}
+
+.navbar a:hover{
+text-decoration:underline;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+padding:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+margin-top:25px;
+border-radius:8px;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th, td{
+padding:10px;
+border-bottom:1px solid #ddd;
+}
+
+th{
+cursor:pointer;
+background:#f2f2f2;
+}
+
+th:hover{
+background:#e6e6e6;
+}
+
+.entryLink{
+color:#0066cc;
+text-decoration:none;
+font-weight:bold;
+}
+
+.entryLink:hover{
+text-decoration:underline;
+}
+
+.rankMove{
+font-weight:bold;
+margin-left:6px;
+}
+
+.up{
+color:green;
+}
+
+.down{
+color:red;
+}
+
+.same{
+color:gray;
+}
+
+.timestamp{
+margin-top:15px;
+font-size:14px;
+color:#666;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+<a href="index.html">Home</a>
+<a href="bracket.html">Bracket</a>
+<a href="leaderboard.html">Leaderboard</a>
+<a href="rules.html">Rules</a>
+<a href="scenarios.html">Scenarios</a>
+<a href="champions.html">Champion Picks</a>
+</div>
+
+<div class="container">
+
+<h1>Leaderboard</h1>
+
+<div class="card">
+
+<table id="leaderboard">
+
+<thead>
+<tr>
+<th onclick="sortTable(0)">Rank</th>
+<th onclick="sortTable(1)">Entry</th>
+<th>Points</th>
+</tr>
+</thead>
+
+<tbody>
+
+<tr>
+<td class="rank" data-prev="3">1</td>
+<td>
+<a class="entryLink" href="donny1.html">
+Donny #1
+</a>
+</td>
+<td>42</td>
+</tr>
+
+<tr>
+<td class="rank" data-prev="1">2</td>
+<td>
+<a class="entryLink" href="mike1.html">
+Mike #1
+</a>
+</td>
+<td>40</td>
+</tr>
+
+<tr>
+<td class="rank" data-prev="2">3</td>
+<td>
+<a class="entryLink" href="sarah1.html">
+Sarah #1
+</a>
+</td>
+<td>38</td>
+</tr>
+
+<tr>
+<td class="rank" data-prev="4">4</td>
+<td>
+<a class="entryLink" href="chris1.html">
+Chris #1
+</a>
+</td>
+<td>36</td>
+</tr>
+
+</tbody>
+
+</table>
+
+<div class="timestamp">
+Last Updated: March 16, 10:30 PM
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+/* RANK MOVEMENT */
+
+let ranks = document.querySelectorAll(".rank")
+
+ranks.forEach(function(cell){
+
+let current = parseInt(cell.innerText)
+let previous = parseInt(cell.dataset.prev)
+
+let diff = previous - current
+
+let indicator = document.createElement("span")
+indicator.classList.add("rankMove")
+
+if(diff > 0){
+
+indicator.classList.add("up")
+indicator.innerText = " ▲ +" + diff
+
+}
+
+else if(diff < 0){
+
+indicator.classList.add("down")
+indicator.innerText = " ▼ " + diff
+
+}
+
+else{
+
+indicator.classList.add("same")
+indicator.innerText = " –"
+
+}
+
+cell.appendChild(indicator)
+
+})
+
+/* SORT TABLE */
+
+let sortDirection = true
+
+function sortTable(column){
+
+let table = document.getElementById("leaderboard")
+let rows = Array.from(table.rows).slice(1)
+
+sortDirection = !sortDirection
+
+rows.sort(function(a,b){
+
+let x = a.cells[column].innerText.toLowerCase()
+let y = b.cells[column].innerText.toLowerCase()
+
+if(!isNaN(x) && !isNaN(y)){
+return sortDirection ? x - y : y - x
+}
+
+return sortDirection ? x.localeCompare(y) : y.localeCompare(x)
+
+})
+
+rows.forEach(row => table.tBodies[0].appendChild(row))
+
+}
+
+</script>
+
+<script>
+
+let results = JSON.parse(localStorage.getItem("marchMadnessResults"))
+
+if(results){
+
+console.log("Tournament Results:",results)
+
+}
+
+</script>
+<script>
+
+const results = JSON.parse(localStorage.getItem("marchMadnessResults") || "{}");
+
+document.querySelectorAll(".matchup").forEach(game => {
+
+const gameId = game.dataset.game;
+const winner = results[gameId];
+
+if(!winner) return;
+
+const teams = game.querySelectorAll(".team");
+
+teams.forEach(team => {
+
+if(team.innerText === winner){
+
+team.classList.add("winner");
+
+}else{
+
+team.classList.add("loser");
+team.classList.add("busted");
+
+}
+
+});
+
+});
+
+</script></body>
+</html>

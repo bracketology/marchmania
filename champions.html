@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Champion Picks</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f5f5f5;
+margin:0;
+text-align:center;
+}
+
+.navbar{
+background:#222;
+padding:12px;
+display:flex;
+justify-content:center;
+gap:25px;
+}
+
+.navbar a{
+color:white;
+text-decoration:none;
+font-weight:bold;
+}
+
+.navbar a:hover{
+text-decoration:underline;
+}
+
+.container{
+max-width:800px;
+margin:auto;
+padding:20px;
+}
+
+.card{
+background:white;
+padding:20px;
+margin-top:25px;
+border-radius:8px;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+
+.team{
+display:flex;
+justify-content:space-between;
+padding:10px;
+border-bottom:1px solid #eee;
+font-size:18px;
+}
+
+.total{
+font-size:22px;
+font-weight:bold;
+margin-bottom:15px;
+}
+
+.percent{
+color:#777;
+font-size:16px;
+margin-left:8px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+<a href="index.html">Home</a>
+<a href="bracket.html">Bracket</a>
+<a href="leaderboard.html">Leaderboard</a>
+<a href="rules.html">Rules</a>
+<a href="scenarios.html">Scenarios</a>
+<a href="champions.html">Champion Picks</a>
+</div>
+
+<div class="container">
+
+<h1>Champion Picks</h1>
+
+<div class="card">
+
+<div class="total">
+Total Champion Picks: <span id="total"></span>
+</div>
+
+<div class="team">
+<span>Duke</span>
+<span><span class="count">6</span><span class="percent"></span></span>
+</div>
+
+<div class="team">
+<span>Houston</span>
+<span><span class="count">4</span><span class="percent"></span></span>
+</div>
+
+<div class="team">
+<span>UConn</span>
+<span><span class="count">3</span><span class="percent"></span></span>
+</div>
+
+<div class="team">
+<span>Arizona</span>
+<span><span class="count">2</span><span class="percent"></span></span>
+</div>
+
+<div class="team">
+<span>Purdue</span>
+<span><span class="count">1</span><span class="percent"></span></span>
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let counts = document.querySelectorAll(".count")
+let percents = document.querySelectorAll(".percent")
+
+let total = 0
+
+counts.forEach(function(c){
+total += parseInt(c.innerText)
+})
+
+document.getElementById("total").innerText = total
+
+counts.forEach(function(c,i){
+
+let value = parseInt(c.innerText)
+
+let percent = total > 0 ? (value / total * 100).toFixed(1) : 0
+
+percents[i].innerText = " (" + percent + "%)"
+
+})
+
+</script>
+
+</body>
+</html>

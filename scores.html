@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin Scores</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f4f4;
+margin:0;
+text-align:center;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:30px;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:8px;
+box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:14px;
+margin-top:20px;
+}
+
+.game{
+text-align:left;
+padding:10px;
+border-bottom:1px solid #eee;
+}
+
+select{
+width:100%;
+padding:6px;
+margin-top:6px;
+}
+
+button{
+margin-top:25px;
+padding:12px 22px;
+font-size:16px;
+background:#2a7ae2;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1d5fb8;
+}
+
+h2{
+margin-top:30px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Admin – Round of 64 Results</h1>
+
+<div class="card">
+
+<div class="grid">
+
+<!-- SOUTH -->
+
+<div class="game">
+(1) Florida vs (16) Prairie View/Lehigh
+<select id="g1">
+<option value="">Select Winner</option>
+<option>Florida</option>
+<option>Prairie View/Lehigh</option>
+</select>
+</div>
+
+<div class="game">
+(8) Colorado vs (9) Mississippi State
+<select id="g2">
+<option value="">Select Winner</option>
+<option>Colorado</option>
+<option>Mississippi State</option>
+</select>
+</div>
+
+<div class="game">
+(5) Auburn vs (12) Liberty
+<select id="g3">
+<option value="">Select Winner</option>
+<option>Auburn</option>
+<option>Liberty</option>
+</select>
+</div>
+
+<div class="game">
+(4) Tennessee vs (13) Princeton
+<select id="g4">
+<option value="">Select Winner</option>
+<option>Tennessee</option>
+<option>Princeton</option>
+</select>
+</div>
+
+<div class="game">
+(6) BYU vs (11) Texas/NC State
+<select id="g5">
+<option value="">Select Winner</option>
+<option>BYU</option>
+<option>Texas/NC State</option>
+</select>
+</div>
+
+<div class="game">
+(3) Baylor vs (14) Vermont
+<select id="g6">
+<option value="">Select Winner</option>
+<option>Baylor</option>
+<option>Vermont</option>
+</select>
+</div>
+
+<div class="game">
+(7) Marquette vs (10) New Mexico
+<select id="g7">
+<option value="">Select Winner</option>
+<option>Marquette</option>
+<option>New Mexico</option>
+</select>
+</div>
+
+<div class="game">
+(2) Michigan vs (15) UMBC/Howard
+<select id="g8">
+<option value="">Select Winner</option>
+<option>Michigan</option>
+<option>UMBC/Howard</option>
+</select>
+</div>
+
+<!-- EAST -->
+
+<div class="game">
+(1) Duke vs (16) Siena
+<select id="g9">
+<option value="">Select Winner</option>
+<option>Duke</option>
+<option>Siena</option>
+</select>
+</div>
+
+<div class="game">
+(8) Ohio State vs (9) TCU
+<select id="g10">
+<option value="">Select Winner</option>
+<option>Ohio State</option>
+<option>TCU</option>
+</select>
+</div>
+
+<div class="game">
+(5) St Johns vs (12) Northern Iowa
+<select id="g11">
+<option value="">Select Winner</option>
+<option>St Johns</option>
+<option>Northern Iowa</option>
+</select>
+</div>
+
+<div class="game">
+(4) Kansas vs (13) Cal Baptist
+<select id="g12">
+<option value="">Select Winner</option>
+<option>Kansas</option>
+<option>Cal Baptist</option>
+</select>
+</div>
+
+<div class="game">
+(6) Louisville vs (11) SMU/Miami (OH)
+<select id="g13">
+<option value="">Select Winner</option>
+<option>Louisville</option>
+<option>SMU/Miami (OH)</option>
+</select>
+</div>
+
+<div class="game">
+(3) Michigan State vs (14) North Dakota State
+<select id="g14">
+<option value="">Select Winner</option>
+<option>Michigan State</option>
+<option>North Dakota State</option>
+</select>
+</div>
+
+<div class="game">
+(7) UCLA vs (10) UCF
+<select id="g15">
+<option value="">Select Winner</option>
+<option>UCLA</option>
+<option>UCF</option>
+</select>
+</div>
+
+<div class="game">
+(2) UConn vs (15) Furman
+<select id="g16">
+<option value="">Select Winner</option>
+<option>UConn</option>
+<option>Furman</option>
+</select>
+</div>
+
+<!-- MIDWEST -->
+
+<div class="game">
+(1) Houston vs (16) Samford
+<select id="g17">
+<option value="">Select Winner</option>
+<option>Houston</option>
+<option>Samford</option>
+</select>
+</div>
+
+<div class="game">
+(8) Georgia vs (9) Saint Louis
+<select id="g18">
+<option value="">Select Winner</option>
+<option>Georgia</option>
+<option>Saint Louis</option>
+</select>
+</div>
+
+<div class="game">
+(5) Texas Tech vs (12) Akron
+<select id="g19">
+<option value="">Select Winner</option>
+<option>Texas Tech</option>
+<option>Akron</option>
+</select>
+</div>
+
+<div class="game">
+(4) Alabama vs (13) Hofstra
+<select id="g20">
+<option value="">Select Winner</option>
+<option>Alabama</option>
+<option>Hofstra</option>
+</select>
+</div>
+
+<div class="game">
+(6) Creighton vs (11) Nevada
+<select id="g21">
+<option value="">Select Winner</option>
+<option>Creighton</option>
+<option>Nevada</option>
+</select>
+</div>
+
+<div class="game">
+(3) Virginia vs (14) Wright State
+<select id="g22">
+<option value="">Select Winner</option>
+<option>Virginia</option>
+<option>Wright State</option>
+</select>
+</div>
+
+<div class="game">
+(7) Kentucky vs (10) Santa Clara
+<select id="g23">
+<option value="">Select Winner</option>
+<option>Kentucky</option>
+<option>Santa Clara</option>
+</select>
+</div>
+
+<div class="game">
+(2) Iowa State vs (15) Tennessee State
+<select id="g24">
+<option value="">Select Winner</option>
+<option>Iowa State</option>
+<option>Tennessee State</option>
+</select>
+</div>
+
+<!-- WEST -->
+
+<div class="game">
+(1) Arizona vs (16) LIU
+<select id="g25">
+<option value="">Select Winner</option>
+<option>Arizona</option>
+<option>LIU</option>
+</select>
+</div>
+
+<div class="game">
+(8) Villanova vs (9) Utah State
+<select id="g26">
+<option value="">Select Winner</option>
+<option>Villanova</option>
+<option>Utah State</option>
+</select>
+</div>
+
+<div class="game">
+(5) Wisconsin vs (12) High Point
+<select id="g27">
+<option value="">Select Winner</option>
+<option>Wisconsin</option>
+<option>High Point</option>
+</select>
+</div>
+
+<div class="game">
+(4) Arkansas vs (13) Hawaii
+<select id="g28">
+<option value="">Select Winner</option>
+<option>Arkansas</option>
+<option>Hawaii</option>
+</select>
+</div>
+
+<div class="game">
+(6) Texas vs (11) Drake
+<select id="g29">
+<option value="">Select Winner</option>
+<option>Texas</option>
+<option>Drake</option>
+</select>
+</div>
+
+<div class="game">
+(3) Gonzaga vs (14) Kennesaw State
+<select id="g30">
+<option value="">Select Winner</option>
+<option>Gonzaga</option>
+<option>Kennesaw State</option>
+</select>
+</div>
+
+<div class="game">
+(7) Miami vs (10) Boise State
+<select id="g31">
+<option value="">Select Winner</option>
+<option>Miami</option>
+<option>Boise State</option>
+</select>
+</div>
+
+<div class="game">
+(2) Purdue vs (15) Colgate
+<select id="g32">
+<option value="">Select Winner</option>
+<option>Purdue</option>
+<option>Colgate</option>
+</select>
+</div>
+
+</div>
+
+<button onclick="saveResults()">Update Results</button>
+
+</div>
+
+</div>
+
+<script>
+
+function saveResults(){
+
+let results={}
+
+for(let i=1;i<=32;i++){
+results["g"+i]=document.getElementById("g"+i).value
+}
+
+localStorage.setItem("marchMadnessResults",JSON.stringify(results))
+
+alert("Results Updated")
+
+}
+
+</script>
+
+</body>
+</html>
