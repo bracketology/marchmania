@@ -5,14 +5,12 @@
 <title>Player Scenarios</title>
 
 <style>
-
 body{
 font-family:Arial;
 background:#f5f5f5;
 margin:0;
 text-align:center;
 }
-
 .navbar{
 background:#222;
 padding:12px;
@@ -20,77 +18,49 @@ display:flex;
 justify-content:center;
 gap:25px;
 }
-
 .navbar a{
 color:white;
 text-decoration:none;
 font-weight:bold;
 }
-
-.navbar a:hover{
-text-decoration:underline;
-}
-
 h1{
 margin-top:25px;
 }
-
 .container{
 max-width:1300px;
 margin:auto;
 padding:20px;
 }
-
 table{
 width:100%;
 border-collapse:collapse;
 background:white;
 }
-
 th,td{
 padding:10px;
 border-bottom:1px solid #ddd;
 }
-
 th{
 background:#333;
 color:white;
 cursor:pointer;
 }
-
-tr:hover{
-background:#f1f1f1;
-}
-
 .rank{
 font-weight:bold;
 }
-
 .alive{
 color:green;
 font-weight:bold;
 }
-
 .eliminated{
 color:red;
 font-weight:bold;
 }
-
 .update{
 margin-top:15px;
 font-size:14px;
 color:#666;
 }
-
-@media(max-width:700px){
-
-th,td{
-font-size:12px;
-padding:6px;
-}
-
-}
-
 </style>
 </head>
 
@@ -107,168 +77,146 @@ padding:6px;
 <h1>Player Scenarios</h1>
 
 <div class="container">
-
 <table id="scenarioTable">
-
 <thead>
 <tr>
-<th onclick="sortTable(0)">Rank</th>
-<th onclick="sortTable(1)">Name</th>
-<th onclick="sortTable(2)">Current Points</th>
+<th>Rank</th>
+<th>Name</th>
+<th>Current Points</th>
 <th>Total Possible</th>
-<th>Best Finish</th>
 <th>Champion Pick</th>
 <th>Still Alive</th>
-<th>Teams To Root For</th>
 </tr>
 </thead>
-
-<tbody>
-
-<tr>
-<td class="rank">1</td>
-<td>Example Entry 1</td>
-<td>42</td>
-<td>132</td>
-<td>1st</td>
-<td>Houston</td>
-<td class="alive">YES</td>
-<td>Houston, Duke</td>
-</tr>
-
-<tr>
-<td class="rank">2</td>
-<td>Example Entry 2</td>
-<td>39</td>
-<td>124</td>
-<td>1st</td>
-<td>Purdue</td>
-<td class="alive">YES</td>
-<td>Purdue, Gonzaga</td>
-</tr>
-
-<tr>
-<td class="rank">3</td>
-<td>Example Entry 3</td>
-<td>36</td>
-<td>110</td>
-<td>2nd</td>
-<td>Arizona</td>
-<td class="alive">YES</td>
-<td>Arizona</td>
-</tr>
-
-<tr>
-<td class="rank">4</td>
-<td>Example Entry 4</td>
-<td>32</td>
-<td>98</td>
-<td>3rd</td>
-<td>UConn</td>
-<td class="alive">YES</td>
-<td>UConn</td>
-</tr>
-
-<tr>
-<td class="rank">5</td>
-<td>Example Entry 5</td>
-<td>30</td>
-<td>92</td>
-<td>5th</td>
-<td>Duke</td>
-<td class="alive">YES</td>
-<td>Duke</td>
-</tr>
-
-</tbody>
-
+<tbody></tbody>
 </table>
 
 <div class="update">
 Last Updated: <span id="timestamp"></span>
 </div>
-
 </div>
 
 <script>
 
-// Load results from GitHub
-async function loadResults(){
+// ROUND POINTS
+function getRoundPoints(gameId){
+let num = parseInt(gameId.replace("g",""));
 
-const response = await fetch("results.json");
-const results = await response.json();
-
-// Loop through table rows
-const rows = document.querySelectorAll("#scenarioTable tbody tr");
-
-rows.forEach(row => {
-
-const champion = row.cells[5].innerText; // Champion Pick
-const aliveCell = row.cells[6];
-
-// Check if champion is still alive
-let stillAlive = false;
-
-for (let game in results){
-if(results[game] === champion){
-stillAlive = true;
-}
+if(num <= 32) return 1;
+if(num <= 48) return 2;
+if(num <= 56) return 4;
+if(num <= 60) return 8;
+if(num <= 62) return 12;
+return 16;
 }
 
-// Update status
-if(stillAlive){
-aliveCell.innerText = "YES";
-aliveCell.className = "alive";
-}else{
-aliveCell.innerText = "NO";
-aliveCell.className = "eliminated";
+// SEED BONUS
+function getSeedBonus(seed){
+if(seed === 9 || seed === 10) return 1;
+if(seed === 11 || seed === 12) return 2;
+if(seed === 13 || seed === 14) return 3;
+if(seed === 15) return 4;
+if(seed === 16) return 5;
+return 0;
 }
+
+async function loadScenarios(){
+
+const results = await (await fetch("results.json")).json();
+const entries = await (await fetch("entries.json")).json();
+const seeds = await (await fetch("seeds.json")).json();
+
+let players = [];
+
+entries.forEach(entry => {
+
+let current = 0;
+let max = 0;
+let alive = false;
+
+// loop through picks
+for(let game in entry.picks){
+
+let pick = entry.picks[game];
+let winner = results[game];
+
+// CURRENT SCORE
+if(winner && pick === winner){
+current += getRoundPoints(game);
+let seed = seeds[winner];
+if(seed) current += getSeedBonus(seed);
+}
+
+// MAX POSSIBLE
+if(!winner){ // game not played yet
+max += getRoundPoints(game);
+let seed = seeds[pick];
+if(seed) max += getSeedBonus(seed);
+alive = true;
+}
+else if(pick === winner){ // already correct
+max += getRoundPoints(game);
+let seed = seeds[winner];
+if(seed) max += getSeedBonus(seed);
+alive = true;
+}
+
+}
+
+// champion pick = g63
+let championPick = entry.picks["g63"] || "";
+
+// FINAL STATUS
+if(max === current){
+alive = false;
+}
+
+// store
+players.push({
+name: entry.name,
+current: current,
+max: max,
+champion: championPick,
+alive: alive
+});
 
 });
 
+// SORT BY CURRENT SCORE
+players.sort((a,b) => b.current - a.current);
+
+// RENDER
+const tbody = document.querySelector("#scenarioTable tbody");
+tbody.innerHTML = "";
+
+players.forEach((p, index) => {
+
+let row = document.createElement("tr");
+
+row.innerHTML = `
+<td class="rank">${index + 1}</td>
+<td>${p.name}</td>
+<td>${p.current}</td>
+<td>${p.max}</td>
+<td>${p.champion}</td>
+<td class="${p.alive ? 'alive' : 'eliminated'}">
+${p.alive ? 'YES' : 'NO'}
+</td>
+`;
+
+tbody.appendChild(row);
+
+});
+
+// TIMESTAMP
+document.getElementById("timestamp").innerText =
+new Date().toLocaleString();
+
 }
 
-// Timestamp
-function updateTimestamp(){
-let now = new Date()
-document.getElementById("timestamp").innerText = now.toLocaleString()
-}
-
-// Sort function (keep yours)
-function sortTable(n){
-let table=document.getElementById("scenarioTable")
-let rows, switching, i, x, y, shouldSwitch
-switching=true
-while(switching){
-switching=false
-rows=table.rows
-for(i=1;i<(rows.length-1);i++){
-shouldSwitch=false
-x=rows[i].getElementsByTagName("TD")[n]
-y=rows[i+1].getElementsByTagName("TD")[n]
-if(n==2||n==0){
-if(Number(x.innerHTML)>Number(y.innerHTML)){
-shouldSwitch=true
-break
-}
-}else{
-if(x.innerHTML.toLowerCase()>y.innerHTML.toLowerCase()){
-shouldSwitch=true
-break
-}
-}
-}
-if(shouldSwitch){
-rows[i].parentNode.insertBefore(rows[i+1],rows[i])
-switching=true
-}
-}
-}
-
-// Run everything
-loadResults();
-updateTimestamp();
+loadScenarios();
 
 </script>
+
 </body>
 </html>
