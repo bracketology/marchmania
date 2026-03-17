@@ -27,7 +27,7 @@ h1{
 margin-top:25px;
 }
 .container{
-max-width:1300px;
+max-width:1400px;
 margin:auto;
 padding:20px;
 }
@@ -84,8 +84,10 @@ color:#666;
 <th>Name</th>
 <th>Current Points</th>
 <th>Total Possible</th>
+<th>Best Finish</th>
 <th>Champion Pick</th>
 <th>Still Alive</th>
+<th>Teams To Root For</th>
 </tr>
 </thead>
 <tbody></tbody>
@@ -120,6 +122,14 @@ if(seed === 16) return 5;
 return 0;
 }
 
+// ORDINAL
+function ordinal(n){
+if(n===1) return "1st";
+if(n===2) return "2nd";
+if(n===3) return "3rd";
+return n + "th";
+}
+
 async function loadScenarios(){
 
 const results = await (await fetch("results.json")).json();
@@ -128,13 +138,14 @@ const seeds = await (await fetch("seeds.json")).json();
 
 let players = [];
 
+// CALCULATE SCORES
 entries.forEach(entry => {
 
 let current = 0;
 let max = 0;
 let alive = false;
+let rootFor = new Set();
 
-// loop through picks
 for(let game in entry.picks){
 
 let pick = entry.picks[game];
@@ -147,61 +158,86 @@ let seed = seeds[winner];
 if(seed) current += getSeedBonus(seed);
 }
 
-// MAX POSSIBLE
-if(!winner){ // game not played yet
+// MAX POSSIBLE + ROOTING LOGIC
+if(!winner){
 max += getRoundPoints(game);
 let seed = seeds[pick];
 if(seed) max += getSeedBonus(seed);
+
 alive = true;
+
+// THIS TEAM HELPS THEM
+rootFor.add(pick);
 }
-else if(pick === winner){ // already correct
+else if(pick === winner){
 max += getRoundPoints(game);
 let seed = seeds[winner];
 if(seed) max += getSeedBonus(seed);
+
 alive = true;
 }
+else{
+// their pick lost → root against winner
+rootFor.add("Against " + winner);
+}
 
 }
 
-// champion pick = g63
 let championPick = entry.picks["g63"] || "";
 
-// FINAL STATUS
-if(max === current){
-alive = false;
-}
-
-// store
 players.push({
 name: entry.name,
 current: current,
 max: max,
 champion: championPick,
-alive: alive
+alive: alive,
+rootFor: Array.from(rootFor)
 });
 
 });
 
-// SORT BY CURRENT SCORE
+// SORT BY CURRENT
 players.sort((a,b) => b.current - a.current);
+
+// ASSIGN RANK
+players.forEach((p,i)=> p.rank = i+1);
+
+// BEST FINISH
+players.forEach(player => {
+
+let better = 0;
+
+players.forEach(other => {
+if(other !== player){
+if(other.current > player.max){
+better++;
+}
+}
+});
+
+player.bestFinish = better + 1;
+
+});
 
 // RENDER
 const tbody = document.querySelector("#scenarioTable tbody");
 tbody.innerHTML = "";
 
-players.forEach((p, index) => {
+players.forEach(p => {
 
 let row = document.createElement("tr");
 
 row.innerHTML = `
-<td class="rank">${index + 1}</td>
+<td class="rank">${p.rank}</td>
 <td>${p.name}</td>
 <td>${p.current}</td>
 <td>${p.max}</td>
+<td>${ordinal(p.bestFinish)}</td>
 <td>${p.champion}</td>
 <td class="${p.alive ? 'alive' : 'eliminated'}">
 ${p.alive ? 'YES' : 'NO'}
 </td>
+<td style="font-size:12px">${p.rootFor.join(", ")}</td>
 `;
 
 tbody.appendChild(row);
