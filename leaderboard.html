@@ -279,7 +279,10 @@ console.log("Tournament Results:",results)
 </script>
 <script>
 
-const results = JSON.parse(localStorage.getItem("marchMadnessResults") || "{}");
+async function loadResults(){
+
+const response = await fetch("results.json");
+const results = await response.json();
 
 document.querySelectorAll(".matchup").forEach(game => {
 
@@ -293,19 +296,18 @@ const teams = game.querySelectorAll(".team");
 teams.forEach(team => {
 
 if(team.innerText === winner){
-
 team.classList.add("winner");
-
 }else{
-
 team.classList.add("loser");
 team.classList.add("busted");
-
 }
 
 });
 
 });
 
-</script></body>
-</html>
+}
+
+loadResults();
+
+</script>

@@ -192,65 +192,83 @@ Last Updated: <span id="timestamp"></span>
 
 <script>
 
-function updateTimestamp(){
-let now=new Date()
-document.getElementById("timestamp").innerText=now.toLocaleString()
+// Load results from GitHub
+async function loadResults(){
+
+const response = await fetch("results.json");
+const results = await response.json();
+
+// Loop through table rows
+const rows = document.querySelectorAll("#scenarioTable tbody tr");
+
+rows.forEach(row => {
+
+const champion = row.cells[5].innerText; // Champion Pick
+const aliveCell = row.cells[6];
+
+// Check if champion is still alive
+let stillAlive = false;
+
+for (let game in results){
+if(results[game] === champion){
+stillAlive = true;
+}
 }
 
-updateTimestamp()
+// Update status
+if(stillAlive){
+aliveCell.innerText = "YES";
+aliveCell.className = "alive";
+}else{
+aliveCell.innerText = "NO";
+aliveCell.className = "eliminated";
+}
 
+});
+
+}
+
+// Timestamp
+function updateTimestamp(){
+let now = new Date()
+document.getElementById("timestamp").innerText = now.toLocaleString()
+}
+
+// Sort function (keep yours)
 function sortTable(n){
-
 let table=document.getElementById("scenarioTable")
 let rows, switching, i, x, y, shouldSwitch
 switching=true
-
 while(switching){
-
 switching=false
 rows=table.rows
-
 for(i=1;i<(rows.length-1);i++){
-
 shouldSwitch=false
-
 x=rows[i].getElementsByTagName("TD")[n]
 y=rows[i+1].getElementsByTagName("TD")[n]
-
 if(n==2||n==0){
-
 if(Number(x.innerHTML)>Number(y.innerHTML)){
-
 shouldSwitch=true
 break
-
 }
-
 }else{
-
 if(x.innerHTML.toLowerCase()>y.innerHTML.toLowerCase()){
-
 shouldSwitch=true
 break
-
 }
-
 }
-
 }
-
 if(shouldSwitch){
-
 rows[i].parentNode.insertBefore(rows[i+1],rows[i])
 switching=true
-
+}
+}
 }
 
-}
-
-}
+// Run everything
+loadResults();
+updateTimestamp();
 
 </script>
-
 </body>
 </html>
