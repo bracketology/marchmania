@@ -265,26 +265,12 @@ rows.forEach(row => table.tBodies[0].appendChild(row))
 }
 
 </script>
-
-<script>
-
-let results = JSON.parse(localStorage.getItem("marchMadnessResults"))
-
-if(results){
-
-console.log("Tournament Results:",results)
-
-}
-
-</script>
 <script>
 
 async function loadResults(){
 
 const response = await fetch("results.json");
 const results = await response.json();
-
-document.querySelectorAll(".matchup").forEach(game => {
 
 const gameId = game.dataset.game;
 const winner = results[gameId];
