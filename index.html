@@ -116,11 +116,10 @@ gap:10px;
 <div class="card">
 <h2>Entries</h2>
 <p><b>Total Entries:</b> <span id="entryCount"></span></p>
-<div class="entries-list">
-<div class="entry">Donny #1</div>
-<div class="entry">Donny #2</div>
-<div class="entry">Mike #1</div>
-</div>
+
+<!-- ✅ NOW DYNAMIC -->
+<div class="entries-list" id="entriesList"></div>
+
 </div>
 
 <div class="card">
@@ -147,30 +146,14 @@ gap:10px;
 
 <h3>Payouts</h3>
 <table class="prize-table">
-<tr>
-<td>1st (50%)</td>
-<td id="p1"></td>
-</tr>
-<tr>
-<td>2nd (20%)</td>
-<td id="p2"></td>
-</tr>
-<tr>
-<td>3rd (15%)</td>
-<td id="p3"></td>
-</tr>
-<tr>
-<td>4th (10%)</td>
-<td id="p4"></td>
-</tr>
-<tr>
-<td>5th (5%)</td>
-<td id="p5"></td>
-</tr>
+<tr><td>1st (50%)</td><td id="p1"></td></tr>
+<tr><td>2nd (20%)</td><td id="p2"></td></tr>
+<tr><td>3rd (15%)</td><td id="p3"></td></tr>
+<tr><td>4th (10%)</td><td id="p4"></td></tr>
+<tr><td>5th (5%)</td><td id="p5"></td></tr>
 </table>
 </div>
 
-<!-- VENMO -->
 <div class="card">
 <h2>Pay Entry Fee</h2>
 <p>Send entry fee via Venmo:</p>
@@ -179,7 +162,6 @@ Pay @donnyshea76
 </a>
 </div>
 
-<!-- ✅ NEW CONTACT CARD -->
 <div class="card">
 <h2>Contact</h2>
 <p>If you have any questions, reach out:</p>
@@ -206,45 +188,62 @@ Twitter Feed
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 <script>
-/* COUNT ENTRIES */
-let entries = document.querySelectorAll(".entry").length
-document.getElementById("entryCount").innerText = entries
 
-/* PRIZE POOL */
-let entryFee = 10
-let totalPool = entries * entryFee
-let rake = totalPool * 0.075
-let netPool = totalPool - rake
+/* 🔥 LOAD ENTRIES FROM GOOGLE SHEET */
+async function loadEntries(){
+const entries = await (await fetch("https://script.google.com/macros/s/AKfycbxFl2X-PoaGAngDB8NGtPT20mnS15KK47MDTDSD_-n6SnB32CnCxEZWoTi8hl_uiHbE/exec")).json();
+
+const list = document.getElementById("entriesList");
+list.innerHTML = "";
+
+entries.forEach(entry => {
+let div = document.createElement("div");
+div.className = "entry";
+div.innerText = entry.name;
+list.appendChild(div);
+});
+
+/* UPDATE COUNT + PRIZE POOL */
+let count = entries.length;
+document.getElementById("entryCount").innerText = count;
+
+let entryFee = 10;
+let totalPool = count * entryFee;
+let rake = totalPool * 0.075;
+let netPool = totalPool - rake;
 
 function format(x){
-return "$" + x.toFixed(2)
+return "$" + x.toFixed(2);
 }
 
-document.getElementById("totalPool").innerText = format(totalPool)
-document.getElementById("rake").innerText = format(rake)
-document.getElementById("netPool").innerText = format(netPool)
-document.getElementById("p1").innerText = format(netPool * 0.50)
-document.getElementById("p2").innerText = format(netPool * 0.20)
-document.getElementById("p3").innerText = format(netPool * 0.15)
-document.getElementById("p4").innerText = format(netPool * 0.10)
-document.getElementById("p5").innerText = format(netPool * 0.05)
+document.getElementById("totalPool").innerText = format(totalPool);
+document.getElementById("rake").innerText = format(rake);
+document.getElementById("netPool").innerText = format(netPool);
+document.getElementById("p1").innerText = format(netPool * 0.50);
+document.getElementById("p2").innerText = format(netPool * 0.20);
+document.getElementById("p3").innerText = format(netPool * 0.15);
+document.getElementById("p4").innerText = format(netPool * 0.10);
+document.getElementById("p5").innerText = format(netPool * 0.05);
+}
+
+loadEntries();
 
 /* COUNTDOWN */
-let lockDate = new Date("March 19, 2026 12:00:00").getTime()
+let lockDate = new Date("March 19, 2026 12:00:00").getTime();
 
 setInterval(function(){
-let now = new Date().getTime()
-let distance = lockDate - now
+let now = new Date().getTime();
+let distance = lockDate - now;
 
-let days = Math.floor(distance/(1000*60*60*24))
-let hours = Math.floor((distance%(1000*60*60*24))/(1000*60*60))
-let minutes = Math.floor((distance%(1000*60*60))/(1000*60))
-let seconds = Math.floor((distance%(1000*60))/1000)
+let days = Math.floor(distance/(1000*60*60*24));
+let hours = Math.floor((distance%(1000*60*60*24))/(1000*60*60));
+let minutes = Math.floor((distance%(1000*60*60))/(1000*60));
+let seconds = Math.floor((distance%(1000*60))/1000);
 
 document.getElementById("countdown").innerHTML =
-days+"d "+hours+"h "+minutes+"m "+seconds+"s "
-},1000)
-</script>
+days+"d "+hours+"h "+minutes+"m "+seconds+"s ";
+},1000);
 
+</script>
 </body>
 </html>
