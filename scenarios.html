@@ -118,102 +118,153 @@ if(n===2) return "2nd";
 if(n===3) return "3rd";
 return n + "th";
 }
+
 async function loadScenarios(){
+
 const results = await (await fetch("results.json")).json();
+const games = await (await fetch("games.json")).json();
 const entries = await (await fetch("https://script.google.com/macros/s/AKfycbxFl2X-PoaGAngDB8NGtPT20mnS15KK47MDTDSD_-n6SnB32CnCxEZWoTi8hl_uiHbE/exec")).json();
+
 let players = [];
-// CALCULATE SCORES
+
+// PREP PLAYERS
 entries.forEach(entry => {
+players.push({
+name: entry.name,
+picks: entry.picks,
+top5: 0,
+teamImpact: {}
+});
+});
+
+// REMAINING GAMES
+let remainingGames = Object.keys(games).filter(g => !results[g]);
+
+let totalScenarios = 1 << remainingGames.length;
+
+// 🔥 LOOP ALL OUTCOMES
+for(let mask = 0; mask < totalScenarios; mask++){
+
+let simResults = {...results};
+
+// BUILD SCENARIO
+remainingGames.forEach((game, i)=>{
+let [teamA, teamB] = games[game];
+simResults[game] = (mask & (1<<i)) ? teamA : teamB;
+});
+
+// SCORE ALL PLAYERS
+let scores = players.map(p => {
+let score = 0;
+for(let game in p.picks){
+let pick = p.picks[game];
+let winner = simResults[game];
+if(pick === winner){
+score += getRoundPoints(game);
+let seed = parseInt(winner.split(" ")[0]) || 0;
+if(seed) score += getSeedBonus(seed);
+}
+}
+return {name: p.name, score};
+});
+
+// RANK
+scores.sort((a,b)=>b.score-a.score);
+
+// MARK TOP 5
+let top5Names = scores.slice(0,5).map(s=>s.name);
+
+players.forEach(p=>{
+if(top5Names.includes(p.name)){
+p.top5++;
+}
+});
+
+// TEAM IMPACT TRACKING
+remainingGames.forEach(game=>{
+let winner = simResults[game];
+players.forEach(p=>{
+if(top5Names.includes(p.name)){
+if(!p.teamImpact[winner]) p.teamImpact[winner]=0;
+p.teamImpact[winner]++;
+}
+});
+});
+
+}
+
+// BUILD FINAL DISPLAY DATA
+players.forEach(p=>{
+
+// SORT TEAMS BY IMPACT
+let teams = Object.entries(p.teamImpact)
+.sort((a,b)=>b[1]-a[1])
+.slice(0,5);
+
+// FORMAT TEXT
+p.rootFor = teams.map(([team,count])=>{
+return `${team} (${count} paths)`;
+});
+
+});
+
+// BASE SCORING (CURRENT + MAX + ALIVE)
+players.forEach(p=>{
 let current = 0;
 let max = 0;
 let alive = false;
-let rootFor = new Set();
-let eliminatedTeams = new Set();
 
-for(let game in entry.picks){
-let pick = entry.picks[game];
+for(let game in p.picks){
+let pick = p.picks[game];
 let winner = results[game];
 
-// CURRENT SCORE
 if(winner && pick === winner){
 current += getRoundPoints(game);
 let seed = parseInt(winner.split(" ")[0]) || 0;
 if(seed) current += getSeedBonus(seed);
 }
 
-// TRACK ELIMINATIONS
-if(winner && pick !== winner){
-eliminatedTeams.add(pick);
-}
-
-// MAX POSSIBLE (fixed so eliminated teams don't keep scoring later)
 if(!winner){
-if(!eliminatedTeams.has(pick)){
 max += getRoundPoints(game);
 let seed = parseInt(pick.split(" ")[0]) || 0;
 if(seed) max += getSeedBonus(seed);
 alive = true;
-rootFor.add(pick);
-}
 }
 else if(pick === winner){
-if(!eliminatedTeams.has(pick)){
 max += getRoundPoints(game);
 let seed = parseInt(winner.split(" ")[0]) || 0;
 if(seed) max += getSeedBonus(seed);
 alive = true;
 }
 }
-else{
-rootFor.add("Against " + winner);
-}
-}
 
-// CLEAN ROOTING LIST (remove dumb duplicates like "Against X" if X already gone)
-let cleanedRootFor = Array.from(rootFor).filter(team => {
-if(team.startsWith("Against ")){
-let t = team.replace("Against ","");
-return !eliminatedTeams.has(t);
-}
-return true;
-});
+p.current = current;
+p.max = max;
+p.alive = alive;
+p.champion = p.picks["g63"] || "";
 
-let championPick = entry.picks["g63"] || "";
-
-players.push({
-name: entry.name,
-current: current,
-max: max,
-champion: championPick,
-alive: alive,
-rootFor: cleanedRootFor
-});
 });
 
 // SORT BY CURRENT
-players.sort((a,b) => b.current - a.current);
-
-// ASSIGN RANK
+players.sort((a,b)=>b.current-a.current);
 players.forEach((p,i)=> p.rank = i+1);
 
 // BEST FINISH
-players.forEach(player => {
-let better = 0;
-players.forEach(other => {
-if(other !== player){
-if(other.current > player.max){
+players.forEach(player=>{
+let better=0;
+players.forEach(other=>{
+if(other!==player && other.current > player.max){
 better++;
 }
-}
 });
-player.bestFinish = better + 1;
+player.bestFinish = better+1;
 });
 
 // RENDER
 const tbody = document.querySelector("#scenarioTable tbody");
 tbody.innerHTML = "";
 
-players.forEach(p => {
+players.forEach(p=>{
 let row = document.createElement("tr");
 row.innerHTML = `
 <td class="rank">${p.rank}</td>
@@ -225,7 +276,10 @@ row.innerHTML = `
 <td class="${p.alive ? 'alive' : 'eliminated'}">
 ${p.alive ? 'YES' : 'NO'}
 </td>
-<td style="font-size:12px">${p.rootFor.join(", ")}</td>
+<td style="font-size:12px">
+${p.rootFor.join(", ")}
+<br><b>${p.top5} total top-5 paths</b>
+</td>
 `;
 tbody.appendChild(row);
 });
@@ -233,7 +287,9 @@ tbody.appendChild(row);
 // TIMESTAMP
 document.getElementById("timestamp").innerText =
 new Date().toLocaleString();
+
 }
+
 loadScenarios();
 </script>
 </body>
