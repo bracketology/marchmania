@@ -430,11 +430,11 @@ if(result.status === "limit"){
   alert("You already submitted 5 entries.");
   return;
 }
+ locked = true;
 alert("Submitted! Check your email.");
 } catch (err) {
   alert("Error submitting");
   console.error(err);
- locked = true;
 }
 }
 </script>
