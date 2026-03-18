@@ -81,14 +81,12 @@ justify-content:center;
 align-items:flex-start;
 overflow-x:auto;
 }
-
 /* 🔥 NEW: staggered bracket spacing */
 .bracket > div:nth-child(2){ margin-top:20px; }
 .bracket > div:nth-child(3){ margin-top:40px; }
 .bracket > div:nth-child(4){ margin-top:60px; }
 .bracket > div:nth-child(5){ margin-top:80px; }
 .bracket > div:nth-child(6){ margin-top:100px; }
-
 .round{
 display:flex;
 flex-direction:column;
@@ -110,11 +108,15 @@ font-size:13px;
 </style>
 </head>
 <body>
+
 <div class="navbar">
 <a href="index.html">Home</a>
-<a href="leaderboard.html">Leaderboard</a>
 <a href="scenarios.html">Scenarios</a>
+<a href="leaderboard.html">Leaderboard</a>
+<a href="rules.html">Rules</a>
+<a href="champions.html">Champions</a>
 </div>
+
 <div class="container">
 <h1>Leaderboard</h1>
 <div class="card">
@@ -131,6 +133,7 @@ font-size:13px;
 </table>
 </div>
 </div>
+
 <!-- MODAL -->
 <div id="modal">
   <div class="modal-content">
@@ -140,20 +143,26 @@ font-size:13px;
     <button onclick="closeModal()">Close</button>
   </div>
 </div>
+
 <script>
 let GLOBAL_RESULTS = {};
 let GLOBAL_ENTRIES = [];
+
 async function loadLeaderboard(){
   const resultsRes = await fetch("results.json");
   const results = await resultsRes.json();
   GLOBAL_RESULTS = results;
+
   const entriesRes = await fetch("https://script.google.com/macros/s/AKfycbxFl2X-PoaGAngDB8NGtPT20mnS15KK47MDTDSD_-n6SnB32CnCxEZWoTi8hl_uiHbE/exec");
   const entries = await entriesRes.json();
   GLOBAL_ENTRIES = entries;
+
   let leaderboard = [];
   const actualTiebreaker = parseInt(results.tiebreaker) || 0;
+
   let previousRanks = JSON.parse(localStorage.getItem("prevRanks") || "{}");
   let newRanks = {};
+
   function getRoundPoints(gameNum){
     if(gameNum <= 32) return 1;
     if(gameNum <= 48) return 2;
@@ -162,6 +171,7 @@ async function loadLeaderboard(){
     if(gameNum <= 62) return 12;
     return 16;
   }
+
   function getSeedBonus(seed){
     if(seed === 9 || seed === 10) return 1;
     if(seed === 11 || seed === 12) return 2;
@@ -170,8 +180,10 @@ async function loadLeaderboard(){
     if(seed === 16) return 5;
     return 0;
   }
+
   entries.forEach(entry => {
     let score = 0;
+
     for(let game in entry.picks){
       if(results[game] && results[game] === entry.picks[game]){
         let gameNum = parseInt(game.replace("g",""));
@@ -181,8 +193,10 @@ async function loadLeaderboard(){
         score += basePoints + bonus;
       }
     }
+
     let entryTB = parseInt(entry.tiebreaker) || 0;
     let diff = Math.abs(entryTB - actualTiebreaker);
+
     leaderboard.push({
       name: entry.name,
       points: score,
@@ -190,16 +204,20 @@ async function loadLeaderboard(){
       diff: diff
     });
   });
+
   leaderboard.sort((a,b) => {
     if (b.points !== a.points) return b.points - a.points;
     return a.diff - b.diff;
   });
+
   const tbody = document.querySelector("#leaderboard tbody");
   tbody.innerHTML = "";
+
   leaderboard.forEach((entry, index) => {
     let oldRank = previousRanks[entry.name];
     let movement = "";
     let movementClass = "";
+
     if (oldRank !== undefined) {
       if (oldRank > index + 1) {
         movement = "▲";
@@ -212,7 +230,9 @@ async function loadLeaderboard(){
         movementClass = "same";
       }
     }
+
     newRanks[entry.name] = index + 1;
+
     let row = document.createElement("tr");
     row.innerHTML = `
       <td>
@@ -229,18 +249,23 @@ async function loadLeaderboard(){
       <td>${entry.points}</td>
       <td>${entry.tiebreaker}</td>
     `;
+
     tbody.appendChild(row);
   });
+
   localStorage.setItem("prevRanks", JSON.stringify(newRanks));
 }
+
 /* BUILD ROUND */
 function buildRound(entry, start, end){
   let html = "";
+
   for(let i = start; i <= end; i++){
     let game = "g" + i;
     let pick = entry.picks[game] || "";
     let result = GLOBAL_RESULTS[game];
     let cls = "pick";
+
     if(result){
       if(result === pick){
         cls += " correct";
@@ -248,16 +273,21 @@ function buildRound(entry, start, end){
         cls += " wrong";
       }
     }
+
     html += `<div class="${cls}">${pick}</div>`;
   }
+
   return html;
 }
+
 /* OPEN MODAL */
 function openModal(name){
   const entry = GLOBAL_ENTRIES.find(e => e.name === name);
   if(!entry) return;
+
   document.getElementById("modal").style.display = "block";
   document.getElementById("modalName").innerText = name;
+
   let html = `
     <div class="bracket">
       <div class="round">
@@ -286,13 +316,17 @@ function openModal(name){
       </div>
     </div>
   `;
+
   document.getElementById("modalPicks").innerHTML = html;
 }
+
 /* CLOSE MODAL */
 function closeModal(){
   document.getElementById("modal").style.display = "none";
 }
+
 loadLeaderboard();
 </script>
+
 </body>
 </html>
