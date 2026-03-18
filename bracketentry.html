@@ -208,13 +208,14 @@ slot.addEventListener("click",function(){
 if(locked) return;
 if(!this.innerText) return
 
-const finalFour = document.querySelectorAll(".center .slot")
-finalFour[regionIndex].innerText = this.innerText
+const centerSlots = document.querySelectorAll(".center .slot")
 
-// clear ONLY downstream center slots correctly
-centerSlots[4].innerText = "" // championship 1
-centerSlots[5].innerText = "" // championship 2
-centerSlots[6].innerText = "" // champion
+centerSlots[regionIndex].innerText = this.innerText
+
+// clear downstream correctly
+centerSlots[4].innerText = ""
+centerSlots[5].innerText = ""
+centerSlots[6].innerText = ""
 })
 })
 }
