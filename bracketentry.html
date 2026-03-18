@@ -370,7 +370,16 @@ try {
   }
 });
 
-let result = await res.json();
+let text = await res.text();
+let result;
+
+try {
+  result = JSON.parse(text);
+} catch {
+  console.error("Not JSON:", text);
+  alert("Server error");
+  return;
+}
 
 if(result.status === "limit"){
   alert("You already submitted 5 entries.");
