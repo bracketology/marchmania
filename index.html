@@ -104,22 +104,15 @@ gap:10px;
 <a href="scenarios.html">Scenarios</a>
 <a href="champions.html">Champions</a>
 </div>
-
 <div class="banner">
 📢 ANNOUNCEMENT: Brackets lock at noon on Thursday! Make sure you read the Rules page CAREFULLY so your entries don't get deleted!
 </div>
-
 <h1>March Madness Pool</h1>
-
 <div class="container">
-
 <div class="card">
 <h2>Entries</h2>
 <p><b>Total Entries:</b> <span id="entryCount"></span></p>
-
-<!-- ✅ NOW DYNAMIC -->
 <div class="entries-list" id="entriesList"></div>
-
 </div>
 
 <div class="card">
@@ -130,20 +123,10 @@ gap:10px;
 <div class="card">
 <h2>Prize Pool</h2>
 <table class="prize-table">
-<tr>
-<td>Total Pool</td>
-<td id="totalPool"></td>
-</tr>
-<tr>
-<td>Site Rake (7.5%)</td>
-<td id="rake"></td>
-</tr>
-<tr>
-<td><b>Net Prize Pool</b></td>
-<td id="netPool"></td>
-</tr>
+<tr><td>Total Pool</td><td id="totalPool"></td></tr>
+<tr><td>Site Rake (7.5%)</td><td id="rake"></td></tr>
+<tr><td><b>Net Prize Pool</b></td><td id="netPool"></td></tr>
 </table>
-
 <h3>Payouts</h3>
 <table class="prize-table">
 <tr><td>1st (50%)</td><td id="p1"></td></tr>
@@ -169,33 +152,31 @@ Pay @donnyshea76
 <p><b>Phone:</b> 207-406-0876</p>
 </div>
 
+<!-- ✅ FIXED TWITTER SECTION -->
 <div class="card">
 <h2>Pool Updates</h2>
-<div class="twitter-box">
+
 <a class="twitter-timeline"
 href="https://twitter.com/MarchMadnessMBB"
 data-width="400"
-data-height="400"
-data-theme="light"
-data-chrome="nofooter noborders">
-Twitter Feed
+data-height="500"
+data-theme="light">
+Loading tweets...
 </a>
-</div>
-</div>
 
 </div>
 
+</div>
+
+<!-- 🔥 IMPORTANT: SCRIPT AT VERY BOTTOM -->
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 <script>
-
 /* 🔥 LOAD ENTRIES FROM GOOGLE SHEET */
 async function loadEntries(){
 const entries = await (await fetch("https://script.google.com/macros/s/AKfycbxFl2X-PoaGAngDB8NGtPT20mnS15KK47MDTDSD_-n6SnB32CnCxEZWoTi8hl_uiHbE/exec")).json();
-
 const list = document.getElementById("entriesList");
 list.innerHTML = "";
-
 entries.forEach(entry => {
 let div = document.createElement("div");
 div.className = "entry";
@@ -203,7 +184,6 @@ div.innerText = entry.name;
 list.appendChild(div);
 });
 
-/* UPDATE COUNT + PRIZE POOL */
 let count = entries.length;
 document.getElementById("entryCount").innerText = count;
 
@@ -225,25 +205,20 @@ document.getElementById("p3").innerText = format(netPool * 0.15);
 document.getElementById("p4").innerText = format(netPool * 0.10);
 document.getElementById("p5").innerText = format(netPool * 0.05);
 }
-
 loadEntries();
 
 /* COUNTDOWN */
 let lockDate = new Date("March 19, 2026 12:00:00").getTime();
-
 setInterval(function(){
 let now = new Date().getTime();
 let distance = lockDate - now;
-
 let days = Math.floor(distance/(1000*60*60*24));
 let hours = Math.floor((distance%(1000*60*60*24))/(1000*60*60));
 let minutes = Math.floor((distance%(1000*60*60))/(1000*60));
 let seconds = Math.floor((distance%(1000*60))/1000);
-
 document.getElementById("countdown").innerHTML =
 days+"d "+hours+"h "+minutes+"m "+seconds+"s ";
 },1000);
-
 </script>
 </body>
 </html>
