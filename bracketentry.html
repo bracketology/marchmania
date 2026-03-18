@@ -211,10 +211,10 @@ if(!this.innerText) return
 const finalFour = document.querySelectorAll(".center .slot")
 finalFour[regionIndex].innerText = this.innerText
 
-// clear center downstream
-for(let i=regionIndex;i<7;i++){
-finalFour[i].innerText = ""
-}
+// clear ONLY downstream center slots correctly
+centerSlots[4].innerText = "" // championship 1
+centerSlots[5].innerText = "" // championship 2
+centerSlots[6].innerText = "" // champion
 })
 })
 }
