@@ -299,6 +299,84 @@ function resetBracket(){
 document.querySelectorAll(".team").forEach(t=>t.classList.remove("selected"))
 document.querySelectorAll(".slot").forEach(s=>s.innerText="")
 }
+async function submitBracket(){
+
+let name = document.getElementById("name").value;
+let phone = document.getElementById("phone").value;
+let email = document.getElementById("email").value;
+let tiebreaker = document.getElementById("tiebreaker").value;
+
+if(!name || !email){
+  alert("Enter name and email");
+  return;
+}
+
+let picks = {};
+let gameCounter = 1;
+
+// ROUND OF 64
+document.querySelectorAll(".region .r64 .game").forEach(game=>{
+  let selected = game.querySelector(".selected");
+  if(selected){
+    picks["g"+gameCounter] = selected.innerText.replace(/^\d+\s/, "");
+  }
+  gameCounter++;
+});
+
+// ROUND OF 32
+document.querySelectorAll(".region .r32 .slot").forEach(slot=>{
+  if(slot.innerText){
+    picks["g"+gameCounter] = slot.innerText;
+  }
+  gameCounter++;
+});
+
+// SWEET 16
+document.querySelectorAll(".region .r16 .slot").forEach(slot=>{
+  if(slot.innerText){
+    picks["g"+gameCounter] = slot.innerText;
+  }
+  gameCounter++;
+});
+
+// ELITE 8
+document.querySelectorAll(".region .r8 .slot").forEach(slot=>{
+  if(slot.innerText){
+    picks["g"+gameCounter] = slot.innerText;
+  }
+  gameCounter++;
+});
+
+// FINAL FOUR + FINALS
+document.querySelectorAll(".center .slot").forEach(slot=>{
+  if(slot.innerText){
+    picks["g"+gameCounter] = slot.innerText;
+  }
+  gameCounter++;
+});
+
+try {
+  await fetch("https://script.google.com/macros/s/AKfycbwEqLgR37JmfORI0i83Pmp1zUnVEvmB3p83N-l1I805rObp-hWkXjOMejto96-lpW96/exec", {
+    method: "POST",
+    body: JSON.stringify({
+      name,
+      phone,
+      email,
+      tiebreaker,
+      picks
+    }),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+
+  alert("Submitted! Check your email.");
+
+} catch (err) {
+  alert("Error submitting");
+  console.error(err);
+}
+}
 </script>
 <hr style="margin-top:60px;">
 <h2>Enter the Pool</h2>
