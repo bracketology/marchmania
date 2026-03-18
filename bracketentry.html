@@ -356,21 +356,28 @@ document.querySelectorAll(".center .slot").forEach(slot=>{
 });
 
 try {
-  await fetch("https://script.google.com/macros/s/AKfycbwEqLgR37JmfORI0i83Pmp1zUnVEvmB3p83N-l1I805rObp-hWkXjOMejto96-lpW96/exec", {
-    method: "POST",
-    body: JSON.stringify({
-      name,
-      phone,
-      email,
-      tiebreaker,
-      picks
-    }),
-    headers: {
-      "Content-Type": "application/json"
-    }
-  });
+  let res = await fetch("https://script.google.com/macros/s/AKfycbwEqLgR37JmfORI0i83Pmp1zUnVEvmB3p83N-l1I805rObp-hWkXjOMejto96-lpW96/exec", {
+  method: "POST",
+  body: JSON.stringify({
+    name,
+    phone,
+    email,
+    tiebreaker,
+    picks
+  }),
+  headers: {
+    "Content-Type": "application/json"
+  }
+});
 
-  alert("Submitted! Check your email.");
+let result = await res.json();
+
+if(result.status === "limit"){
+  alert("You already submitted 5 entries.");
+  return;
+}
+
+alert("Submitted! Check your email.");
 
 } catch (err) {
   alert("Error submitting");
