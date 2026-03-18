@@ -281,6 +281,10 @@ width:220px;
 </div>
 <script>
 let locked = false;
+ // LOAD LOCK STATE ON PAGE LOAD
+if(localStorage.getItem("bracketLocked") === "true"){
+  locked = true;
+}
 function setupRegion(region, regionIndex){
 const rounds = region.querySelectorAll(".round")
 const r64 = rounds[0].querySelectorAll(".game")
@@ -434,7 +438,8 @@ if(result.status === "limit"){
   alert("You already submitted 5 entries.");
   return;
 }
- locked = true;
+locked = true;
+localStorage.setItem("bracketLocked", "true"); // ✅ SAVE LOCK
 alert("Submitted! Check your email.");
 } catch (err) {
   alert("Error submitting");
