@@ -284,7 +284,7 @@ width:220px;
 </div>
 </div>
 <script>
-function setupRegion(region){
+function setupRegion(region, regionIndex){
 const rounds = region.querySelectorAll(".round")
 const r64 = rounds[0].querySelectorAll(".game")
 const r32 = rounds[1].querySelectorAll(".slot")
@@ -316,17 +316,17 @@ r8[Math.floor(index/2)].innerText = this.innerText
 })
 })
 /* ELITE 8 -> FINAL FOUR */
-r8.forEach((slot,index)=>{
+r8.forEach((slot)=>{
 slot.addEventListener("click",function(){
 if(!this.innerText) return
 const finalFour = document.querySelectorAll(".center .slot")
-finalFour[index].innerText = this.innerText
+finalFour[regionIndex].innerText = this.innerText
 })
 })
 }
 /* SETUP ALL REGIONS */
-document.querySelectorAll(".region").forEach(region=>{
-setupRegion(region)
+document.querySelectorAll(".region").forEach((region, index)=>{
+setupRegion(region, index)
 })
 /* FINAL FOUR -> CHAMPIONSHIP -> CHAMPION */
 const centerSlots = document.querySelectorAll(".center .slot")
