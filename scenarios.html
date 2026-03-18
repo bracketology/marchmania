@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Player Scenarios</title>
-
 <style>
 body{
 font-family:Arial;
@@ -63,9 +62,7 @@ color:#666;
 }
 </style>
 </head>
-
 <body>
-
 <div class="navbar">
 <a href="index.html">Home</a>
 <a href="bracket.html">Bracket</a>
@@ -73,9 +70,7 @@ color:#666;
 <a href="rules.html">Rules</a>
 <a href="scenarios.html">Scenarios</a>
 </div>
-
 <h1>Player Scenarios</h1>
-
 <div class="container">
 <table id="scenarioTable">
 <thead>
@@ -92,18 +87,14 @@ color:#666;
 </thead>
 <tbody></tbody>
 </table>
-
 <div class="update">
 Last Updated: <span id="timestamp"></span>
 </div>
 </div>
-
 <script>
-
 // ROUND POINTS
 function getRoundPoints(gameId){
 let num = parseInt(gameId.replace("g",""));
-
 if(num <= 32) return 1;
 if(num <= 48) return 2;
 if(num <= 56) return 4;
@@ -111,7 +102,6 @@ if(num <= 60) return 8;
 if(num <= 62) return 12;
 return 16;
 }
-
 // SEED BONUS
 function getSeedBonus(seed){
 if(seed === 9 || seed === 10) return 1;
@@ -121,7 +111,6 @@ if(seed === 15) return 4;
 if(seed === 16) return 5;
 return 0;
 }
-
 // ORDINAL
 function ordinal(n){
 if(n===1) return "1st";
@@ -129,59 +118,65 @@ if(n===2) return "2nd";
 if(n===3) return "3rd";
 return n + "th";
 }
-
 async function loadScenarios(){
-
 const results = await (await fetch("results.json")).json();
-const entries = await (await fetch("entries.json")).json();
-const seeds = await (await fetch("seeds.json")).json();
-
+const entries = await (await fetch("https://script.google.com/macros/s/AKfycbxFl2X-PoaGAngDB8NGtPT20mnS15KK47MDTDSD_-n6SnB32CnCxEZWoTi8hl_uiHbE/exec")).json();
 let players = [];
-
 // CALCULATE SCORES
 entries.forEach(entry => {
-
 let current = 0;
 let max = 0;
 let alive = false;
 let rootFor = new Set();
+let eliminatedTeams = new Set();
 
 for(let game in entry.picks){
-
 let pick = entry.picks[game];
 let winner = results[game];
 
 // CURRENT SCORE
 if(winner && pick === winner){
 current += getRoundPoints(game);
-let seed = seeds[winner];
+let seed = parseInt(winner.split(" ")[0]) || 0;
 if(seed) current += getSeedBonus(seed);
 }
 
-// MAX POSSIBLE + ROOTING LOGIC
+// TRACK ELIMINATIONS
+if(winner && pick !== winner){
+eliminatedTeams.add(pick);
+}
+
+// MAX POSSIBLE (fixed so eliminated teams don't keep scoring later)
 if(!winner){
+if(!eliminatedTeams.has(pick)){
 max += getRoundPoints(game);
-let seed = seeds[pick];
+let seed = parseInt(pick.split(" ")[0]) || 0;
 if(seed) max += getSeedBonus(seed);
-
 alive = true;
-
-// THIS TEAM HELPS THEM
 rootFor.add(pick);
 }
+}
 else if(pick === winner){
+if(!eliminatedTeams.has(pick)){
 max += getRoundPoints(game);
-let seed = seeds[winner];
+let seed = parseInt(winner.split(" ")[0]) || 0;
 if(seed) max += getSeedBonus(seed);
-
 alive = true;
 }
+}
 else{
-// their pick lost → root against winner
 rootFor.add("Against " + winner);
 }
-
 }
+
+// CLEAN ROOTING LIST (remove dumb duplicates like "Against X" if X already gone)
+let cleanedRootFor = Array.from(rootFor).filter(team => {
+if(team.startsWith("Against ")){
+let t = team.replace("Against ","");
+return !eliminatedTeams.has(t);
+}
+return true;
+});
 
 let championPick = entry.picks["g63"] || "";
 
@@ -191,9 +186,8 @@ current: current,
 max: max,
 champion: championPick,
 alive: alive,
-rootFor: Array.from(rootFor)
+rootFor: cleanedRootFor
 });
-
 });
 
 // SORT BY CURRENT
@@ -204,9 +198,7 @@ players.forEach((p,i)=> p.rank = i+1);
 
 // BEST FINISH
 players.forEach(player => {
-
 let better = 0;
-
 players.forEach(other => {
 if(other !== player){
 if(other.current > player.max){
@@ -214,9 +206,7 @@ better++;
 }
 }
 });
-
 player.bestFinish = better + 1;
-
 });
 
 // RENDER
@@ -224,9 +214,7 @@ const tbody = document.querySelector("#scenarioTable tbody");
 tbody.innerHTML = "";
 
 players.forEach(p => {
-
 let row = document.createElement("tr");
-
 row.innerHTML = `
 <td class="rank">${p.rank}</td>
 <td>${p.name}</td>
@@ -239,20 +227,14 @@ ${p.alive ? 'YES' : 'NO'}
 </td>
 <td style="font-size:12px">${p.rootFor.join(", ")}</td>
 `;
-
 tbody.appendChild(row);
-
 });
 
 // TIMESTAMP
 document.getElementById("timestamp").innerText =
 new Date().toLocaleString();
-
 }
-
 loadScenarios();
-
 </script>
-
 </body>
 </html>
