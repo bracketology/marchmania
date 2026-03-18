@@ -3,16 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <title>March Madness Pool</title>
-
 <style>
-
 body{
 font-family:Arial;
 background:#f5f5f5;
 margin:0;
 text-align:center;
 }
-
 .navbar{
 background:#222;
 padding:12px;
@@ -20,33 +17,27 @@ display:flex;
 justify-content:center;
 gap:25px;
 }
-
 .navbar a{
 color:white;
 text-decoration:none;
 font-weight:bold;
 }
-
 .navbar a:hover{
 text-decoration:underline;
 }
-
 .banner{
 background:#ffcc00;
 padding:10px;
 font-weight:bold;
 }
-
 h1{
 margin-top:20px;
 }
-
 .container{
 max-width:1000px;
 margin:auto;
 padding:20px;
 }
-
 .card{
 background:white;
 padding:20px;
@@ -54,7 +45,6 @@ margin-top:25px;
 border-radius:8px;
 box-shadow:0 2px 6px rgba(0,0,0,0.1);
 }
-
 .entries-list{
 max-height:220px;
 overflow-y:auto;
@@ -62,54 +52,57 @@ border:1px solid #ddd;
 padding:10px;
 text-align:left;
 }
-
 .entry{
 padding:6px;
 border-bottom:1px solid #eee;
 }
-
 .prize-table{
 width:100%;
 border-collapse:collapse;
 }
-
 .prize-table td{
 padding:8px;
 border-bottom:1px solid #ddd;
 }
-
 .countdown{
 font-size:24px;
 font-weight:bold;
 color:#d00;
 margin-top:10px;
 }
-
 .twitter-box{
 display:flex;
 justify-content:center;
 }
-
+.venmo-btn{
+display:inline-block;
+background:#3D95CE;
+color:white;
+padding:12px 20px;
+border-radius:6px;
+text-decoration:none;
+font-weight:bold;
+margin-top:10px;
+}
+.venmo-btn:hover{
+background:#2f7fb0;
+}
 @media(max-width:700px){
-
 .navbar{
 flex-wrap:wrap;
 gap:10px;
 }
-
 }
-
 </style>
 </head>
-
 <body>
-
 <div class="navbar">
 <a href="index.html">Home</a>
 <a href="bracketentry.html">Bracket</a>
 <a href="leaderboard.html">Leaderboard</a>
 <a href="rules.html">Rules</a>
 <a href="scenarios.html">Scenarios</a>
+<a href="champions.html">Champions</a>
 </div>
 
 <div class="banner">
@@ -121,94 +114,82 @@ gap:10px;
 <div class="container">
 
 <div class="card">
-
 <h2>Entries</h2>
-
 <p><b>Total Entries:</b> <span id="entryCount"></span></p>
-
 <div class="entries-list">
-
 <div class="entry">Donny #1</div>
 <div class="entry">Donny #2</div>
 <div class="entry">Mike #1</div>
-
 </div>
-
 </div>
-
 
 <div class="card">
-
 <h2>Countdown to Bracket Lock</h2>
-
 <div class="countdown" id="countdown"></div>
-
 </div>
 
-
 <div class="card">
-
 <h2>Prize Pool</h2>
-
 <table class="prize-table">
-
 <tr>
 <td>Total Pool</td>
 <td id="totalPool"></td>
 </tr>
-
 <tr>
 <td>Site Rake (7.5%)</td>
 <td id="rake"></td>
 </tr>
-
 <tr>
 <td><b>Net Prize Pool</b></td>
 <td id="netPool"></td>
 </tr>
-
 </table>
 
 <h3>Payouts</h3>
-
 <table class="prize-table">
-
 <tr>
 <td>1st (50%)</td>
 <td id="p1"></td>
 </tr>
-
 <tr>
 <td>2nd (20%)</td>
 <td id="p2"></td>
 </tr>
-
 <tr>
 <td>3rd (15%)</td>
 <td id="p3"></td>
 </tr>
-
 <tr>
 <td>4th (10%)</td>
 <td id="p4"></td>
 </tr>
-
 <tr>
 <td>5th (5%)</td>
 <td id="p5"></td>
 </tr>
-
 </table>
-
 </div>
 
+<!-- VENMO -->
+<div class="card">
+<h2>Pay Entry Fee</h2>
+<p>Send entry fee via Venmo:</p>
+<a class="venmo-btn" href="https://venmo.com/donnyshea76" target="_blank">
+Pay @donnyshea76
+</a>
+</div>
+
+<!-- ✅ NEW CONTACT CARD -->
+<div class="card">
+<h2>Contact</h2>
+<p>If you have any questions, reach out:</p>
+<p><b>Email:</b> dsheattp@gmail.com</p>
+<p><b>Phone:</b> 207-406-0876</p>
+</div>
 
 <div class="card">
-
 <h2>Pool Updates</h2>
-
 <div class="twitter-box">
-
 <a class="twitter-timeline"
 href="https://twitter.com/MarchMadnessMBB"
 data-width="400"
@@ -217,9 +198,7 @@ data-theme="light"
 data-chrome="nofooter noborders">
 Twitter Feed
 </a>
-
 </div>
-
 </div>
 
 </div>
@@ -227,17 +206,12 @@ Twitter Feed
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 <script>
-
 /* COUNT ENTRIES */
-
 let entries = document.querySelectorAll(".entry").length
 document.getElementById("entryCount").innerText = entries
 
-
 /* PRIZE POOL */
-
 let entryFee = 10
-
 let totalPool = entries * entryFee
 let rake = totalPool * 0.075
 let netPool = totalPool - rake
@@ -249,20 +223,16 @@ return "$" + x.toFixed(2)
 document.getElementById("totalPool").innerText = format(totalPool)
 document.getElementById("rake").innerText = format(rake)
 document.getElementById("netPool").innerText = format(netPool)
-
 document.getElementById("p1").innerText = format(netPool * 0.50)
 document.getElementById("p2").innerText = format(netPool * 0.20)
 document.getElementById("p3").innerText = format(netPool * 0.15)
 document.getElementById("p4").innerText = format(netPool * 0.10)
 document.getElementById("p5").innerText = format(netPool * 0.05)
 
-
 /* COUNTDOWN */
-
 let lockDate = new Date("March 19, 2026 12:00:00").getTime()
 
 setInterval(function(){
-
 let now = new Date().getTime()
 let distance = lockDate - now
 
@@ -273,9 +243,7 @@ let seconds = Math.floor((distance%(1000*60))/1000)
 
 document.getElementById("countdown").innerHTML =
 days+"d "+hours+"h "+minutes+"m "+seconds+"s "
-
 },1000)
-
 </script>
 
 </body>
