@@ -380,7 +380,11 @@ try {
   alert("Server error");
   return;
 }
-
+if(result.status === "closed"){
+  alert("Submissions are closed.");
+  return;
+}
+ 
 if(result.status === "limit"){
   alert("You already submitted 5 entries.");
   return;
