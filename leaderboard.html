@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Leaderboard</title>
-
 <style>
 body{
 font-family:Arial;
@@ -51,12 +50,8 @@ color:#0066cc;
 text-decoration:none;
 font-weight:bold;
 }
-.up{color:green;}
-.down{color:red;}
-.same{color:gray;}
 </style>
 </head>
-
 <body>
 
 <div class="navbar">
@@ -80,62 +75,102 @@ font-weight:bold;
 <tbody></tbody>
 </table>
 </div>
+
 </div>
 
 <script>
-
 async function loadLeaderboard(){
 
-const resultsRes = await fetch("results.json");
-const results = await resultsRes.json();
+  // RESULTS
+  const resultsRes = await fetch("results.json");
+  const results = await resultsRes.json();
 
-const entriesRes = await fetch("const entriesRes = await fetch("https://script.google.com/macros/s/AKfycbxFl2X-PoaGAngDB8NGtPT20mnS15KK47MDTDSD_-n6SnB32CnCxEZWoTi8hl_uiHbE/exec");");
-const entries = await entriesRes.json();
+  // ENTRIES (FIXED FETCH)
+  const entriesRes = await fetch("https://script.google.com/macros/s/AKfycbxFl2X-PoaGAngDB8NGtPT20mnS15KK47MDTDSD_-n6SnB32CnCxEZWoTi8hl_uiHbE/exec");
+  const entries = await entriesRes.json();
 
-let leaderboard = [];
+  let leaderboard = [];
 
-entries.forEach(entry => {
+  const actualTiebreaker = parseInt(results.tiebreaker) || 0;
 
-let score = 0;
+  // ROUND POINTS
+  function getRoundPoints(gameNum){
+    if(gameNum <= 32) return 1;
+    if(gameNum <= 48) return 2;
+    if(gameNum <= 56) return 4;
+    if(gameNum <= 60) return 8;
+    if(gameNum <= 62) return 12;
+    return 16;
+  }
 
-for(let game in entry.picks){
-if(results[game] && results[game] === entry.picks[game]){
-score += 1; // simple scoring (we can upgrade later)
-}
-}
+  // SEED BONUS
+  function getSeedBonus(seed){
+    if(seed === 9 || seed === 10) return 1;
+    if(seed === 11 || seed === 12) return 2;
+    if(seed === 13 || seed === 14) return 3;
+    if(seed === 15) return 4;
+    if(seed === 16) return 5;
+    return 0;
+  }
 
-leaderboard.push({
-name: entry.name,
-points: score
-});
+  // CALCULATE SCORES
+  entries.forEach(entry => {
+    let score = 0;
 
-});
+    for(let game in entry.picks){
+      if(results[game] && results[game] === entry.picks[game]){
 
-// SORT BY POINTS
-leaderboard.sort((a,b) => b.points - a.points);
+        let gameNum = parseInt(game.replace("g",""));
+        let basePoints = getRoundPoints(gameNum);
 
-// RENDER
-const tbody = document.querySelector("#leaderboard tbody");
-tbody.innerHTML = "";
+        let seed = parseInt(entry.picks[game].split(" ")[0]) || 0;
+        let bonus = getSeedBonus(seed);
 
-leaderboard.forEach((entry, index) => {
+        score += basePoints + bonus;
+      }
+    }
 
-let row = document.createElement("tr");
+    // TIEBREAKER
+    let entryTB = parseInt(entry.tiebreaker) || 0;
+    let diff = Math.abs(entryTB - actualTiebreaker);
 
-row.innerHTML = `
-<td>${index + 1}</td>
-<td><a class="entryLink" href="bracket.html?name=${encodeURIComponent(entry.name)}">${entry.name}</a></td>
-<td>${entry.points}</td>
-`;
+    leaderboard.push({
+      name: entry.name,
+      points: score,
+      diff: diff
+    });
+  });
 
-tbody.appendChild(row);
+  // SORT (points first, then tiebreaker)
+  leaderboard.sort((a,b) => {
+    if (b.points !== a.points) {
+      return b.points - a.points;
+    }
+    return a.diff - b.diff;
+  });
 
-});
+  // RENDER
+  const tbody = document.querySelector("#leaderboard tbody");
+  tbody.innerHTML = "";
 
+  leaderboard.forEach((entry, index) => {
+    let row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${index + 1}</td>
+      <td>
+        <a class="entryLink" href="bracket.html?name=${encodeURIComponent(entry.name)}">
+          ${entry.name}
+        </a>
+      </td>
+      <td>${entry.points}</td>
+    `;
+
+    tbody.appendChild(row);
+  });
 }
 
 loadLeaderboard();
-
 </script>
 
 </body>
