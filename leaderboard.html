@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Leaderboard</title>
+
 <style>
 body{
 font-family:Arial;
@@ -10,6 +11,7 @@ background:#f5f5f5;
 margin:0;
 text-align:center;
 }
+
 .navbar{
 background:#222;
 padding:12px;
@@ -17,54 +19,117 @@ display:flex;
 justify-content:center;
 gap:25px;
 }
+
 .navbar a{
 color:white;
 text-decoration:none;
 font-weight:bold;
 }
+
 .container{
 max-width:900px;
 margin:auto;
 padding:20px;
 }
+
 .card{
 background:white;
 padding:20px;
 margin-top:25px;
 border-radius:8px;
 }
+
 table{
 width:100%;
 border-collapse:collapse;
 }
+
 th,td{
 padding:10px;
 border-bottom:1px solid #ddd;
 }
+
 th{
-cursor:pointer;
 background:#f2f2f2;
 }
+
 .entryLink{
 color:#0066cc;
-text-decoration:none;
 font-weight:bold;
+cursor:pointer;
 }
 
-/* ✅ ARROW COLORS */
+/* ARROWS */
 .up{color:green; font-weight:bold;}
 .down{color:red; font-weight:bold;}
 .same{color:gray;}
+
+/* MODAL */
+#modal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.7);
+}
+
+.modal-content{
+background:white;
+margin:30px auto;
+padding:20px;
+max-width:95%;
+border-radius:8px;
+text-align:center;
+max-height:90%;
+overflow:auto;
+}
+
+/* BRACKET LAYOUT */
+.bracket{
+display:flex;
+gap:20px;
+justify-content:center;
+align-items:flex-start;
+overflow-x:auto;
+}
+
+.round{
+display:flex;
+flex-direction:column;
+gap:8px;
+min-width:120px;
+}
+
+.round h4{
+margin-bottom:10px;
+}
+
+.pick{
+padding:4px;
+border-radius:4px;
+background:#eee;
+font-size:13px;
+}
+
+/* COLORS */
+.correct{background:#c8f7c5;}
+.wrong{background:#f7c5c5;}
 </style>
 </head>
+
 <body>
+
 <div class="navbar">
 <a href="index.html">Home</a>
 <a href="leaderboard.html">Leaderboard</a>
 <a href="scenarios.html">Scenarios</a>
 </div>
+
 <div class="container">
 <h1>Leaderboard</h1>
+
 <div class="card">
 <table id="leaderboard">
 <thead>
@@ -80,19 +145,33 @@ font-weight:bold;
 </div>
 </div>
 
+<!-- MODAL -->
+<div id="modal">
+  <div class="modal-content">
+    <h2 id="modalName"></h2>
+    <div id="modalPicks"></div>
+    <br>
+    <button onclick="closeModal()">Close</button>
+  </div>
+</div>
+
 <script>
+let GLOBAL_RESULTS = {};
+let GLOBAL_ENTRIES = [];
+
 async function loadLeaderboard(){
 
   const resultsRes = await fetch("results.json");
   const results = await resultsRes.json();
+  GLOBAL_RESULTS = results;
 
   const entriesRes = await fetch("https://script.google.com/macros/s/AKfycbxFl2X-PoaGAngDB8NGtPT20mnS15KK47MDTDSD_-n6SnB32CnCxEZWoTi8hl_uiHbE/exec");
   const entries = await entriesRes.json();
+  GLOBAL_ENTRIES = entries;
 
   let leaderboard = [];
   const actualTiebreaker = parseInt(results.tiebreaker) || 0;
 
-  // LOAD PREVIOUS RANKS
   let previousRanks = JSON.parse(localStorage.getItem("prevRanks") || "{}");
   let newRanks = {};
 
@@ -114,7 +193,6 @@ async function loadLeaderboard(){
     return 0;
   }
 
-  // CALCULATE SCORES
   entries.forEach(entry => {
     let score = 0;
 
@@ -139,15 +217,11 @@ async function loadLeaderboard(){
     });
   });
 
-  // SORT
   leaderboard.sort((a,b) => {
-    if (b.points !== a.points) {
-      return b.points - a.points;
-    }
+    if (b.points !== a.points) return b.points - a.points;
     return a.diff - b.diff;
   });
 
-  // RENDER
   const tbody = document.querySelector("#leaderboard tbody");
   tbody.innerHTML = "";
 
@@ -182,9 +256,9 @@ async function loadLeaderboard(){
         </span>
       </td>
       <td>
-        <a class="entryLink" href="bracket.html?name=${encodeURIComponent(entry.name)}">
+        <span class="entryLink" onclick="openModal('${entry.name}')">
           ${entry.name}
-        </a>
+        </span>
       </td>
       <td>${entry.points}</td>
       <td>${entry.tiebreaker}</td>
@@ -193,11 +267,86 @@ async function loadLeaderboard(){
     tbody.appendChild(row);
   });
 
-  // SAVE NEW RANKS
   localStorage.setItem("prevRanks", JSON.stringify(newRanks));
+}
+
+/* BUILD ROUND */
+function buildRound(entry, start, end){
+  let html = "";
+  for(let i = start; i <= end; i++){
+    let game = "g" + i;
+    let pick = entry.picks[game] || "";
+    let result = GLOBAL_RESULTS[game];
+
+    let cls = "pick";
+
+    if(result){
+      if(result === pick){
+        cls += " correct";
+      } else {
+        cls += " wrong";
+      }
+    }
+
+    html += `<div class="${cls}">${pick}</div>`;
+  }
+  return html;
+}
+
+/* OPEN MODAL */
+function openModal(name){
+  const entry = GLOBAL_ENTRIES.find(e => e.name === name);
+  if(!entry) return;
+
+  document.getElementById("modal").style.display = "block";
+  document.getElementById("modalName").innerText = name;
+
+  let html = `
+    <div class="bracket">
+
+      <div class="round">
+        <h4>R1</h4>
+        ${buildRound(entry,1,32)}
+      </div>
+
+      <div class="round">
+        <h4>R2</h4>
+        ${buildRound(entry,33,48)}
+      </div>
+
+      <div class="round">
+        <h4>S16</h4>
+        ${buildRound(entry,49,56)}
+      </div>
+
+      <div class="round">
+        <h4>E8</h4>
+        ${buildRound(entry,57,60)}
+      </div>
+
+      <div class="round">
+        <h4>F4</h4>
+        ${buildRound(entry,61,62)}
+      </div>
+
+      <div class="round">
+        <h4>Champ</h4>
+        ${buildRound(entry,63,63)}
+      </div>
+
+    </div>
+  `;
+
+  document.getElementById("modalPicks").innerHTML = html;
+}
+
+/* CLOSE MODAL */
+function closeModal(){
+  document.getElementById("modal").style.display = "none";
 }
 
 loadLeaderboard();
 </script>
+
 </body>
 </html>
