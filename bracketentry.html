@@ -280,8 +280,7 @@ width:220px;
 </div>
 </div>
 <script>
-let locked = false;
- // LOAD LOCK STATE ON PAGE LOAD
+let locked = localStorage.getItem("locked") === "true";
 if(localStorage.getItem("bracketLocked") === "true"){
   locked = true;
 }
