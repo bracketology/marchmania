@@ -139,7 +139,88 @@ width:220px;
 </head>
 <script>
 
-function submitBracket(){
+<script>
+async function submitBracket(){
+
+let name = document.getElementById("name").value;
+let phone = document.getElementById("phone").value;
+let email = document.getElementById("email").value;
+let tiebreaker = document.getElementById("tiebreaker").value;
+
+if(!name){
+alert("Enter your name!");
+return;
+}
+
+let picks = {};
+let gameCounter = 1;
+
+// ROUND OF 64
+document.querySelectorAll(".region .r64 .game").forEach(game=>{
+let selected = game.querySelector(".selected");
+if(selected){
+picks["g"+gameCounter] = selected.innerText.replace(/^\d+\s/, "");
+}
+gameCounter++;
+});
+
+// ROUND OF 32
+document.querySelectorAll(".region .r32 .slot").forEach(slot=>{
+if(slot.innerText){
+picks["g"+gameCounter] = slot.innerText.replace(/^\d+\s/, "");
+}
+gameCounter++;
+});
+
+// SWEET 16
+document.querySelectorAll(".region .r16 .slot").forEach(slot=>{
+if(slot.innerText){
+picks["g"+gameCounter] = slot.innerText.replace(/^\d+\s/, "");
+}
+gameCounter++;
+});
+
+// ELITE 8
+document.querySelectorAll(".region .r8 .slot").forEach(slot=>{
+if(slot.innerText){
+picks["g"+gameCounter] = slot.innerText.replace(/^\d+\s/, "");
+}
+gameCounter++;
+});
+
+// FINAL FOUR + FINALS
+document.querySelectorAll(".center .slot").forEach(slot=>{
+if(slot.innerText){
+picks["g"+gameCounter] = slot.innerText.replace(/^\d+\s/, "");
+}
+gameCounter++;
+});
+
+try {
+
+await fetch("PASTE_YOUR_URL_HERE", {
+method: "POST",
+body: JSON.stringify({
+name,
+phone,
+email,
+tiebreaker,
+picks
+}),
+headers: {
+"Content-Type": "application/json"
+}
+});
+
+alert("✅ Submitted! You're in the pool.");
+
+} catch (err) {
+alert("❌ Error submitting. Try again.");
+console.error(err);
+}
+
+}
+</script>
 
 let name = document.getElementById("name").value;
 let tiebreaker = document.getElementById("tiebreaker").value;
