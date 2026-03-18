@@ -104,26 +104,20 @@ gap:10px;
 <a href="scenarios.html">Scenarios</a>
 <a href="champions.html">Champions</a>
 </div>
-
 <div class="banner">
 📢 ANNOUNCEMENT: Brackets lock at noon on Thursday! Make sure you read the Rules page CAREFULLY so your entries don't get deleted!
 </div>
-
 <h1>March Madness Pool</h1>
-
 <div class="container">
-
 <div class="card">
 <h2>Entries</h2>
 <p><b>Total Entries:</b> <span id="entryCount"></span></p>
 <div class="entries-list" id="entriesList"></div>
 </div>
-
 <div class="card">
 <h2>Countdown to Bracket Lock</h2>
 <div class="countdown" id="countdown"></div>
 </div>
-
 <div class="card">
 <h2>Prize Pool</h2>
 <table class="prize-table">
@@ -140,7 +134,6 @@ gap:10px;
 <tr><td>5th (5%)</td><td id="p5"></td></tr>
 </table>
 </div>
-
 <div class="card">
 <h2>Pay Entry Fee</h2>
 <p>Send entry fee via Venmo:</p>
@@ -148,56 +141,34 @@ gap:10px;
 Pay @donnyshea76
 </a>
 </div>
-
 <div class="card">
 <h2>Contact</h2>
 <p>If you have any questions, reach out:</p>
 <p><b>Email:</b> dsheattp@gmail.com</p>
 <p><b>Phone:</b> 207-406-0876</p>
 </div>
-
-<!-- ✅ FIXED WORKING TWITTER WIDGET -->
-<div class="card">
-<h2>Pool Updates</h2>
-<div class="twitter-box">
-<iframe
-src="https://platform.twitter.com/widgets/timeline.html?screen_name=MarchMadnessMBB"
-width="400"
-height="500"
-style="border:none; overflow:auto;">
-</iframe>
 </div>
-</div>
-
-</div>
-
 <script>
 /* LOAD ENTRIES FROM GOOGLE SHEET */
 async function loadEntries(){
 const entries = await (await fetch("https://script.google.com/macros/s/AKfycbxFl2X-PoaGAngDB8NGtPT20mnS15KK47MDTDSD_-n6SnB32CnCxEZWoTi8hl_uiHbE/exec")).json();
-
 const list = document.getElementById("entriesList");
 list.innerHTML = "";
-
 entries.forEach(entry => {
 let div = document.createElement("div");
 div.className = "entry";
 div.innerText = entry.name;
 list.appendChild(div);
 });
-
 let count = entries.length;
 document.getElementById("entryCount").innerText = count;
-
 let entryFee = 10;
 let totalPool = count * entryFee;
 let rake = totalPool * 0.075;
 let netPool = totalPool - rake;
-
 function format(x){
 return "$" + x.toFixed(2);
 }
-
 document.getElementById("totalPool").innerText = format(totalPool);
 document.getElementById("rake").innerText = format(rake);
 document.getElementById("netPool").innerText = format(netPool);
@@ -207,25 +178,19 @@ document.getElementById("p3").innerText = format(netPool * 0.15);
 document.getElementById("p4").innerText = format(netPool * 0.10);
 document.getElementById("p5").innerText = format(netPool * 0.05);
 }
-
 loadEntries();
-
 /* COUNTDOWN */
 let lockDate = new Date("March 19, 2026 12:00:00").getTime();
-
 setInterval(function(){
 let now = new Date().getTime();
 let distance = lockDate - now;
-
 let days = Math.floor(distance/(1000*60*60*24));
 let hours = Math.floor((distance%(1000*60*60*24))/(1000*60*60));
 let minutes = Math.floor((distance%(1000*60*60))/(1000*60));
 let seconds = Math.floor((distance%(1000*60))/1000);
-
 document.getElementById("countdown").innerHTML =
 days+"d "+hours+"h "+minutes+"m "+seconds+"s ";
 },1000);
 </script>
-
 </body>
 </html>
