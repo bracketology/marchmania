@@ -305,7 +305,7 @@ picks["g"+gameCounter] = slot.innerText;
 gameCounter++;
 });
 // ✅ make sure bracket is complete
-if(Object.keys(picks).length < 63){
+if(Object.keys(picks).length !== 63){
   alert("Finish your bracket before submitting");
   return;
 }
