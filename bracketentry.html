@@ -280,6 +280,7 @@ width:220px;
 </div>
 </div>
 <script>
+let locked = false;
 function setupRegion(region, regionIndex){
 const rounds = region.querySelectorAll(".round")
 const r64 = rounds[0].querySelectorAll(".game")
@@ -291,6 +292,7 @@ r64.forEach((game,gameIndex)=>{
 const teams = game.querySelectorAll(".team")
 teams.forEach(team=>{
 team.addEventListener("click",function(){
+if(locked) return;
 teams.forEach(t=>t.classList.remove("selected"))
 this.classList.add("selected")
 r32[gameIndex].innerText = this.innerText
@@ -300,6 +302,7 @@ r32[gameIndex].innerText = this.innerText
 /* ROUND OF 32 -> SWEET 16 */
 r32.forEach((slot,index)=>{
 slot.addEventListener("click",function(){
+if(locked) return;
 if(!this.innerText) return
 r16[Math.floor(index/2)].innerText = this.innerText
 })
@@ -307,6 +310,7 @@ r16[Math.floor(index/2)].innerText = this.innerText
 /* SWEET 16 -> ELITE 8 */
 r16.forEach((slot,index)=>{
 slot.addEventListener("click",function(){
+if(locked) return;
 if(!this.innerText) return
 r8[Math.floor(index/2)].innerText = this.innerText
 })
@@ -314,6 +318,7 @@ r8[Math.floor(index/2)].innerText = this.innerText
 /* ELITE 8 -> FINAL FOUR */
 r8.forEach((slot)=>{
 slot.addEventListener("click",function(){
+if(locked) return;
 if(!this.innerText) return
 const finalFour = document.querySelectorAll(".center .slot")
 finalFour[regionIndex].innerText = this.innerText
@@ -331,17 +336,18 @@ const championship = [centerSlots[4],centerSlots[5]]
 const champion = centerSlots[6]
 finalFour.forEach((slot,index)=>{
 slot.addEventListener("click",function(){
-if(!this.innerText) return
+if(locked) return;
 championship[Math.floor(index/2)].innerText = this.innerText
 })
 })
 championship.forEach((slot,index)=>{
 slot.addEventListener("click",function(){
-if(!this.innerText) return
+if(locked) return;
 champion.innerText = this.innerText
 })
 })
 function resetBracket(){
+if(locked) return;
 document.querySelectorAll(".team").forEach(t=>t.classList.remove("selected"))
 document.querySelectorAll(".slot").forEach(s=>s.innerText="")
 }
@@ -428,6 +434,7 @@ alert("Submitted! Check your email.");
 } catch (err) {
   alert("Error submitting");
   console.error(err);
+ locked = true;
 }
 }
 </script>
