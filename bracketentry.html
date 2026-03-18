@@ -398,6 +398,10 @@ document.querySelectorAll(".center .slot").forEach(slot=>{
   }
   gameCounter++;
 });
+if(Object.keys(picks).length !== 63){
+  alert("Finish your bracket before submitting");
+  return;
+}
 try {
   let res = await fetch("https://script.google.com/macros/s/AKfycbxFl2X-PoaGAngDB8NGtPT20mnS15KK47MDTDSD_-n6SnB32CnCxEZWoTi8hl_uiHbE/exec", {
   method: "POST",
