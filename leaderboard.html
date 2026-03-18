@@ -70,6 +70,7 @@ font-weight:bold;
 <th>Rank</th>
 <th>Entry</th>
 <th>Points</th>
+  <th>tiebreaker</th>
 </tr>
 </thead>
 <tbody></tbody>
@@ -137,6 +138,7 @@ async function loadLeaderboard(){
     leaderboard.push({
       name: entry.name,
       points: score,
+       tiebreaker: entryTB,
       diff: diff
     });
   });
@@ -164,6 +166,7 @@ async function loadLeaderboard(){
         </a>
       </td>
       <td>${entry.points}</td>
+<td>${entry.tiebreaker}</td>
     `;
 
     tbody.appendChild(row);
