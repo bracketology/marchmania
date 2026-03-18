@@ -50,19 +50,21 @@ color:#0066cc;
 text-decoration:none;
 font-weight:bold;
 }
+
+/* ✅ ARROW COLORS */
+.up{color:green; font-weight:bold;}
+.down{color:red; font-weight:bold;}
+.same{color:gray;}
 </style>
 </head>
 <body>
-
 <div class="navbar">
 <a href="index.html">Home</a>
 <a href="leaderboard.html">Leaderboard</a>
 <a href="scenarios.html">Scenarios</a>
 </div>
-
 <div class="container">
 <h1>Leaderboard</h1>
-
 <div class="card">
 <table id="leaderboard">
 <thead>
@@ -70,31 +72,30 @@ font-weight:bold;
 <th>Rank</th>
 <th>Entry</th>
 <th>Points</th>
-  <th>tiebreaker</th>
+<th>Tiebreaker</th>
 </tr>
 </thead>
 <tbody></tbody>
 </table>
 </div>
-
 </div>
 
 <script>
 async function loadLeaderboard(){
 
-  // RESULTS
   const resultsRes = await fetch("results.json");
   const results = await resultsRes.json();
 
-  // ENTRIES (FIXED FETCH)
   const entriesRes = await fetch("https://script.google.com/macros/s/AKfycbxFl2X-PoaGAngDB8NGtPT20mnS15KK47MDTDSD_-n6SnB32CnCxEZWoTi8hl_uiHbE/exec");
   const entries = await entriesRes.json();
 
   let leaderboard = [];
-
   const actualTiebreaker = parseInt(results.tiebreaker) || 0;
 
-  // ROUND POINTS
+  // LOAD PREVIOUS RANKS
+  let previousRanks = JSON.parse(localStorage.getItem("prevRanks") || "{}");
+  let newRanks = {};
+
   function getRoundPoints(gameNum){
     if(gameNum <= 32) return 1;
     if(gameNum <= 48) return 2;
@@ -104,7 +105,6 @@ async function loadLeaderboard(){
     return 16;
   }
 
-  // SEED BONUS
   function getSeedBonus(seed){
     if(seed === 9 || seed === 10) return 1;
     if(seed === 11 || seed === 12) return 2;
@@ -120,30 +120,26 @@ async function loadLeaderboard(){
 
     for(let game in entry.picks){
       if(results[game] && results[game] === entry.picks[game]){
-
         let gameNum = parseInt(game.replace("g",""));
         let basePoints = getRoundPoints(gameNum);
-
         let seed = parseInt(entry.picks[game].split(" ")[0]) || 0;
         let bonus = getSeedBonus(seed);
-
         score += basePoints + bonus;
       }
     }
 
-    // TIEBREAKER
     let entryTB = parseInt(entry.tiebreaker) || 0;
     let diff = Math.abs(entryTB - actualTiebreaker);
 
     leaderboard.push({
       name: entry.name,
       points: score,
-       tiebreaker: entryTB,
+      tiebreaker: entryTB,
       diff: diff
     });
   });
 
-  // SORT (points first, then tiebreaker)
+  // SORT
   leaderboard.sort((a,b) => {
     if (b.points !== a.points) {
       return b.points - a.points;
@@ -156,25 +152,52 @@ async function loadLeaderboard(){
   tbody.innerHTML = "";
 
   leaderboard.forEach((entry, index) => {
+
+    let oldRank = previousRanks[entry.name];
+    let movement = "";
+    let movementClass = "";
+
+    if (oldRank !== undefined) {
+      if (oldRank > index + 1) {
+        movement = "▲";
+        movementClass = "up";
+      } else if (oldRank < index + 1) {
+        movement = "▼";
+        movementClass = "down";
+      } else {
+        movement = "—";
+        movementClass = "same";
+      }
+    }
+
+    newRanks[entry.name] = index + 1;
+
     let row = document.createElement("tr");
 
     row.innerHTML = `
-      <td>${index + 1}</td>
+      <td>
+        ${index + 1}
+        <span class="${movementClass}" style="margin-left:6px;">
+          ${movement}
+        </span>
+      </td>
       <td>
         <a class="entryLink" href="bracket.html?name=${encodeURIComponent(entry.name)}">
           ${entry.name}
         </a>
       </td>
       <td>${entry.points}</td>
-<td>${entry.tiebreaker}</td>
+      <td>${entry.tiebreaker}</td>
     `;
 
     tbody.appendChild(row);
   });
+
+  // SAVE NEW RANKS
+  localStorage.setItem("prevRanks", JSON.stringify(newRanks));
 }
 
 loadLeaderboard();
 </script>
-
 </body>
 </html>
