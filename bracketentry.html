@@ -114,9 +114,59 @@ padding:8px;
 margin:5px;
 width:220px;
 }
+ /* NAVBAR */
+.navbar{
+  width:100%;
+  background:#111;
+  color:white;
+  padding:12px 0;
+  position:sticky;
+  top:0;
+  z-index:1000;
+}
+
+.nav-container{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  max-width:1400px;
+  margin:0 auto;
+  padding:0 20px;
+}
+
+.nav-logo{
+  font-size:20px;
+  font-weight:bold;
+  color:white;
+  text-decoration:none;
+}
+
+.nav-links a{
+  color:white;
+  text-decoration:none;
+  margin-left:20px;
+  font-size:16px;
+  transition:0.2s;
+}
+
+.nav-links a:hover{
+  color:#4CAF50;
+}
 </style>
 </head>
 <body>
+ <nav class="navbar">
+  <div class="nav-container">
+    <a href="#" class="nav-logo">March Madness Pool</a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="leaderboard.html">Leaderboard</a>
+      <a href="champions.html">Champions</a>
+      <a href="rules.html">Rules</a>
+      <a href="scenarios.html">Scenarios</a>
+    </div>
+  </div>
+</nav>
 <h1>March Madness Pool</h1>
 <div class="bracket">
 <!-- EAST -->
