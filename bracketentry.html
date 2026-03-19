@@ -381,13 +381,11 @@ let picks = {};
 let gameCounter = 1;
 
 // ROUND OF 64
-document.querySelectorAll(".region").forEach(region=>{
-  region.querySelectorAll(".r8 .slot").forEach(slot=>{
-    if(slot.innerText){
-      picks["g"+gameCounter] = slot.innerText;
-      gameCounter++;
-    }
-  });
+document.querySelectorAll(".region .r64 .game").forEach(game=>{
+  let selected = game.querySelector(".selected");
+  if(selected){
+    picks["g"+gameCounter++] = selected.innerText.replace(/^\d+\s/, "");
+  }
 });
 
 // ROUND OF 32
