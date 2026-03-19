@@ -420,18 +420,16 @@ document.querySelectorAll(".region").forEach(region=>{
 });
 
 // FINAL FOUR
-finalFour.forEach(slot=>{
-  if(slot.innerText){
-    picks["g"+gameCounter++] = slot.innerText;
+for(let i = 0; i < finalFour.length; i += 2){
+  if(finalFour[i].innerText){
+    picks["g"+gameCounter++] = finalFour[i].innerText;
   }
-});
+}
 
 // CHAMPIONSHIP
-championship.forEach(slot=>{
-  if(slot.innerText){
-    picks["g"+gameCounter++] = slot.innerText;
-  }
-});
+if(championship[0].innerText){
+  picks["g"+gameCounter++] = championship[0].innerText;
+}
 
 // CHAMPION
 if(champion.innerText){
