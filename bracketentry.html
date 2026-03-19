@@ -385,55 +385,55 @@ document.querySelectorAll(".region .r64 .game").forEach(game=>{
   let selected = game.querySelector(".selected");
   if(selected){
     picks["g"+gameCounter] = selected.innerText.replace(/^\d+\s/, "");
-  }
   gameCounter++;
+  }
 });
 
 // ROUND OF 32
 document.querySelectorAll(".region .r32 .slot").forEach(slot=>{
   if(slot.innerText){
     picks["g"+gameCounter] = slot.innerText;
-  }
   gameCounter++;
+  }
 });
 
 // SWEET 16
 document.querySelectorAll(".region .r16 .slot").forEach(slot=>{
   if(slot.innerText){
     picks["g"+gameCounter] = slot.innerText;
-  }
   gameCounter++;
+  }
 });
 
 // ELITE 8
 document.querySelectorAll(".region .r8 .slot").forEach(slot=>{
   if(slot.innerText){
     picks["g"+gameCounter] = slot.innerText;
-  }
   gameCounter++;
+  }
 });
 
 // FINAL FOUR
 finalFour.forEach(slot=>{
   if(slot.innerText){
     picks["g"+gameCounter] = slot.innerText;
-  }
   gameCounter++;
+  }
 });
 
 // CHAMPIONSHIP
 championship.forEach(slot=>{
   if(slot.innerText){
     picks["g"+gameCounter] = slot.innerText;
-  }
   gameCounter++;
+  }
 });
 
 // CHAMPION
 if(champion.innerText){
   picks["g"+gameCounter] = champion.innerText;
-}
 gameCounter++;
+}
 
 // VALIDATION
 console.log("TOTAL PICKS:", Object.keys(picks).length);
