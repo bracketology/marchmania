@@ -320,11 +320,23 @@ r8[Math.floor(index/2)].innerText = this.innerText
 })
 /* ELITE 8 -> FINAL FOUR */
 r8.forEach((slot)=>{
-slot.addEventListener("click",function(){
-if(locked) return;
-if(!this.innerText) return
-const finalFour = document.querySelectorAll(".center .slot")
-finalFour[regionIndex].innerText = this.innerText
+  slot.addEventListener("click",function(){
+    if(locked) return;
+    if(!this.innerText) return
+
+    const finalFour = document.querySelectorAll(".center .slot")
+
+    // Map regions to correct Final Four positions
+    const map = {
+      0: 0, // EAST -> top slot 1
+      2: 1, // SOUTH -> top slot 2
+      1: 2, // WEST -> bottom slot 1
+      3: 3  // MIDWEST -> bottom slot 2
+    }
+
+    finalFour[map[regionIndex]].innerText = this.innerText
+  })
+})
 })
 })
 }
@@ -334,7 +346,7 @@ setupRegion(region, index)
 })
 /* FINAL FOUR -> CHAMPIONSHIP -> CHAMPION */
 const centerSlots = document.querySelectorAll(".center .slot")
-const finalFour = [centerSlots[0],centerSlots[2],centerSlots[1],centerSlots[3]]
+const finalFour = [centerSlots[0],centerSlots[1],centerSlots[2],centerSlots[3]]
 const championship = [centerSlots[4],centerSlots[5]]
 const champion = centerSlots[6]
 finalFour.forEach((slot,index)=>{
