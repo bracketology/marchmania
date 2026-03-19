@@ -381,33 +381,6 @@ let picks = {};
 let gameCounter = 1;
 
 // ROUND OF 64
-document.querySelectorAll(".region .r64 .game").forEach(game=>{
-  let selected = game.querySelector(".selected");
-  if(selected){
-    picks["g"+gameCounter] = selected.innerText.replace(/^\d+\s/, "");
-  gameCounter++;
-  }
-});
-
-// ROUND OF 32
-document.querySelectorAll(".region .r32 .slot").forEach(slot=>{
-  if(slot.innerText){
-    picks["g"+gameCounter] = slot.innerText;
-  gameCounter++;
-  }
-});
-
-// SWEET 16
-document.querySelectorAll(".region").forEach(region=>{
-  region.querySelectorAll(".r32 .slot").forEach(slot=>{
-    if(slot.innerText){
-      picks["g"+gameCounter] = slot.innerText;
-      gameCounter++;
-    }
-  });
-});
-
-// ELITE 8
 document.querySelectorAll(".region").forEach(region=>{
   region.querySelectorAll(".r8 .slot").forEach(slot=>{
     if(slot.innerText){
@@ -417,26 +390,44 @@ document.querySelectorAll(".region").forEach(region=>{
   });
 });
 
+// ROUND OF 32
+document.querySelectorAll(".r32 .slot").forEach(slot=>{
+  if(slot.innerText){
+    picks["g"+gameCounter++] = slot.innerText;
+  }
+});
+
+// SWEET 16
+document.querySelectorAll(".r16 .slot").forEach(slot=>{
+  if(slot.innerText){
+    picks["g"+gameCounter++] = slot.innerText;
+  }
+});
+
+// ELITE 8
+document.querySelectorAll(".r8 .slot").forEach(slot=>{
+  if(slot.innerText){
+    picks["g"+gameCounter++] = slot.innerText;
+  }
+});
+
 // FINAL FOUR
 finalFour.forEach(slot=>{
   if(slot.innerText){
-    picks["g"+gameCounter] = slot.innerText;
-  gameCounter++;
+    picks["g"+gameCounter++] = slot.innerText;
   }
 });
 
 // CHAMPIONSHIP
 championship.forEach(slot=>{
   if(slot.innerText){
-    picks["g"+gameCounter] = slot.innerText;
-  gameCounter++;
+    picks["g"+gameCounter++] = slot.innerText;
   }
 });
 
 // CHAMPION
 if(champion.innerText){
-  picks["g"+gameCounter] = champion.innerText;
-gameCounter++;
+  picks["g"+gameCounter++] = champion.innerText;
 }
 
 // VALIDATION
