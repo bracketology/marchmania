@@ -334,7 +334,14 @@ r8.forEach((slot)=>{
       3: 3  // MIDWEST -> bottom slot 2
     }
 
-    finalFour[map[regionIndex]].innerText = this.innerText
+    const map = {
+  0: 0, // EAST
+  2: 1, // SOUTH
+  1: 2, // WEST
+  3: 3  // MIDWEST
+}
+
+finalFour[map[regionIndex]].innerText = this.innerText
   })
 })
 })
