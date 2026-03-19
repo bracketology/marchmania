@@ -371,12 +371,15 @@ let name = document.getElementById("name").value;
 let phone = document.getElementById("phone").value;
 let email = document.getElementById("email").value;
 let tiebreaker = document.getElementById("tiebreaker").value;
+
 if(!name || !email){
   alert("Enter name and email");
   return;
 }
+
 let picks = {};
 let gameCounter = 1;
+
 // ROUND OF 64
 document.querySelectorAll(".region .r64 .game").forEach(game=>{
   let selected = game.querySelector(".selected");
@@ -385,6 +388,7 @@ document.querySelectorAll(".region .r64 .game").forEach(game=>{
   }
   gameCounter++;
 });
+
 // ROUND OF 32
 document.querySelectorAll(".region .r32 .slot").forEach(slot=>{
   if(slot.innerText){
@@ -392,6 +396,7 @@ document.querySelectorAll(".region .r32 .slot").forEach(slot=>{
   }
   gameCounter++;
 });
+
 // SWEET 16
 document.querySelectorAll(".region .r16 .slot").forEach(slot=>{
   if(slot.innerText){
@@ -399,6 +404,7 @@ document.querySelectorAll(".region .r16 .slot").forEach(slot=>{
   }
   gameCounter++;
 });
+
 // ELITE 8
 document.querySelectorAll(".region .r8 .slot").forEach(slot=>{
   if(slot.innerText){
@@ -406,7 +412,8 @@ document.querySelectorAll(".region .r8 .slot").forEach(slot=>{
   }
   gameCounter++;
 });
-// FINAL FOUR (4)
+
+// FINAL FOUR
 finalFour.forEach(slot=>{
   if(slot.innerText){
     picks["g"+gameCounter] = slot.innerText;
@@ -414,7 +421,7 @@ finalFour.forEach(slot=>{
   gameCounter++;
 });
 
-// CHAMPIONSHIP (2)
+// CHAMPIONSHIP
 championship.forEach(slot=>{
   if(slot.innerText){
     picks["g"+gameCounter] = slot.innerText;
@@ -422,56 +429,56 @@ championship.forEach(slot=>{
   gameCounter++;
 });
 
-// CHAMPION (1)
+// CHAMPION
 if(champion.innerText){
   picks["g"+gameCounter] = champion.innerText;
 }
 gameCounter++;
+
+// VALIDATION
 if(Object.keys(picks).length !== 63){
   alert("Finish your bracket before submitting");
   return;
 }
+
 try {
-  let res = await fetch("https://script.google.com/macros/s/AKfycbxFl2X-PoaGAngDB8NGtPT20mnS15KK47MDTDSD_-n6SnB32CnCxEZWoTi8hl_uiHbE/exec", {
-  method: "POST",
-  body: JSON.stringify({
-    name,
-    phone,
-    email,
-    tiebreaker,
-    picks
-  }),
-  headers: {
-    "Content-Type": "application/json"
+  let res = await fetch("YOUR_SCRIPT_URL_HERE", {
+    method: "POST",
+    body: JSON.stringify({
+      name,
+      phone,
+      email,
+      tiebreaker,
+      picks
+    }),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+
+  let text = await res.text();
+  let result = JSON.parse(text);
+
+  if(result.status === "closed"){
+    alert("Submissions are closed.");
+    return;
   }
-});
-let text = await res.text();
-let result;
-try {
-  result = JSON.parse(text);
-} catch {
-  console.error("Not JSON:", text);
-  alert("Server error");
-  return;
-}
-if(result.status === "closed"){
-  alert("Submissions are closed.");
-  return;
-}
- 
-if(result.status === "limit"){
-  alert("You already submitted 5 entries.");
-  return;
-}
-locked = true;
-localStorage.setItem("bracketLocked", "true");
- 
-alert("Submitted! Check your email.");
+
+  if(result.status === "limit"){
+    alert("You already submitted 5 entries.");
+    return;
+  }
+
+  locked = true;
+  localStorage.setItem("bracketLocked", "true");
+
+  alert("Submitted! Check your email.");
+
 } catch (err) {
   alert("Error submitting");
   console.error(err);
 }
-</script>
+}
 <hr style="margin-top:60px;">
 <h2>Enter the Pool</h2>
 <div class="entry-form">
