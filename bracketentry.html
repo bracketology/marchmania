@@ -391,7 +391,7 @@ document.querySelectorAll(".region .r64 .game").forEach(game=>{
 // ROUND OF 32
 document.querySelectorAll(".region").forEach(region=>{
   const slots = region.querySelectorAll(".r32 .slot");
-  
+
   for(let i = 0; i < slots.length; i += 2){
     if(slots[i].innerText){
       picks["g"+gameCounter++] = slots[i].innerText;
