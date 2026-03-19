@@ -400,16 +400,22 @@ document.querySelectorAll(".region").forEach(region=>{
 });
 
 // SWEET 16
-document.querySelectorAll(".r16 .slot").forEach(slot=>{
-  if(slot.innerText){
-    picks["g"+gameCounter++] = slot.innerText;
+document.querySelectorAll(".region").forEach(region=>{
+  const slots = region.querySelectorAll(".r16 .slot");
+  for(let i = 0; i < slots.length; i += 2){
+    if(slots[i].innerText){
+      picks["g"+gameCounter++] = slots[i].innerText;
+    }
   }
 });
 
 // ELITE 8
-document.querySelectorAll(".r8 .slot").forEach(slot=>{
-  if(slot.innerText){
-    picks["g"+gameCounter++] = slot.innerText;
+document.querySelectorAll(".region").forEach(region=>{
+  const slots = region.querySelectorAll(".r8 .slot");
+  for(let i = 0; i < slots.length; i += 2){
+    if(slots[i].innerText){
+      picks["g"+gameCounter++] = slots[i].innerText;
+    }
   }
 });
 
