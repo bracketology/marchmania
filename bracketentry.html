@@ -449,7 +449,8 @@ if(result.status === "limit"){
   alert("You already submitted 5 entries.");
   return;
 }
-let locked = localStorage.getItem("bracketLocked") === "true";
+locked = true;
+localStorage.setItem("bracketLocked", "true");
 alert("Submitted! Check your email.");
 } catch (err) {
   alert("Error submitting");
