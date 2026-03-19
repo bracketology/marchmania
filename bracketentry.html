@@ -325,7 +325,7 @@ r8.forEach((slot)=>{
     if(locked) return;
     if(!this.innerText) return
 
-    const finalFour = document.querySelectorAll(".center .slot")
+   const centerSlots = document.querySelectorAll(".center .slot")
 
     // Map regions to correct Final Four positions
    
@@ -336,7 +336,7 @@ r8.forEach((slot)=>{
   3: 3  // MIDWEST
 }
 
-finalFour[map[regionIndex]].innerText = this.innerText
+centerSlots[map[regionIndex]].innerText = this.innerText
 })
 })
 }
