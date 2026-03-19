@@ -427,7 +427,6 @@ if(champion.innerText){
   picks["g"+gameCounter] = champion.innerText;
 }
 gameCounter++;
-}
 if(Object.keys(picks).length !== 63){
   alert("Finish your bracket before submitting");
   return;
@@ -471,7 +470,6 @@ alert("Submitted! Check your email.");
 } catch (err) {
   alert("Error submitting");
   console.error(err);
-}
 }
 </script>
 <hr style="margin-top:60px;">
