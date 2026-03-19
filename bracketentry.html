@@ -436,7 +436,9 @@ if(champion.innerText){
 gameCounter++;
 
 // VALIDATION
-if(Object.keys(picks).length !== 63){
+console.log("TOTAL PICKS:", Object.keys(picks).length);
+ 
+ if(Object.keys(picks).length !== 63){
   alert("Finish your bracket before submitting");
   return;
 }
