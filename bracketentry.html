@@ -398,19 +398,23 @@ document.querySelectorAll(".region .r32 .slot").forEach(slot=>{
 });
 
 // SWEET 16
-document.querySelectorAll(".region .r16 .slot").forEach(slot=>{
-  if(slot.innerText){
-    picks["g"+gameCounter] = slot.innerText;
-  gameCounter++;
-  }
+document.querySelectorAll(".region").forEach(region=>{
+  region.querySelectorAll(".r32 .slot").forEach(slot=>{
+    if(slot.innerText){
+      picks["g"+gameCounter] = slot.innerText;
+      gameCounter++;
+    }
+  });
 });
 
 // ELITE 8
-document.querySelectorAll(".region .r8 .slot").forEach(slot=>{
-  if(slot.innerText){
-    picks["g"+gameCounter] = slot.innerText;
-  gameCounter++;
-  }
+document.querySelectorAll(".region").forEach(region=>{
+  region.querySelectorAll(".r8 .slot").forEach(slot=>{
+    if(slot.innerText){
+      picks["g"+gameCounter] = slot.innerText;
+      gameCounter++;
+    }
+  });
 });
 
 // FINAL FOUR
