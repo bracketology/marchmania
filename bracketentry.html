@@ -406,10 +406,27 @@ document.querySelectorAll(".region .r8 .slot").forEach(slot=>{
   }
   gameCounter++;
 });
-// FINAL FOUR + FINALS
-document.querySelectorAll(".center .slot").forEach(slot=>{
+// FINAL FOUR (4)
+finalFour.forEach(slot=>{
   if(slot.innerText){
     picks["g"+gameCounter] = slot.innerText;
+  }
+  gameCounter++;
+});
+
+// CHAMPIONSHIP (2)
+championship.forEach(slot=>{
+  if(slot.innerText){
+    picks["g"+gameCounter] = slot.innerText;
+  }
+  gameCounter++;
+});
+
+// CHAMPION (1)
+if(champion.innerText){
+  picks["g"+gameCounter] = champion.innerText;
+}
+gameCounter++;
   }
   gameCounter++;
 });
